@@ -4,7 +4,6 @@ public class User {
 	private String email; // jedinstveno
 	private String name;
 	private String lastName;
-	private String username;
 	private String password;
 	private Organization organization;
 	private Role role;
@@ -13,13 +12,12 @@ public class User {
 		super();
 	}
 	
-	public User(String email, String name, String lastName, String username, String password, Organization organization,
+	public User(String email, String name, String lastName, String password, Organization organization,
 			Role role) {
 		super();
 		this.email = email;
 		this.name = name;
 		this.lastName = lastName;
-		this.username = username;
 		this.password = password;
 		this.organization = organization;
 		this.role = role;
@@ -42,13 +40,6 @@ public class User {
 	}
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
-	}
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
 	}
 
 	public String getPassword() {
