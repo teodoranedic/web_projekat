@@ -1,37 +1,114 @@
 package io;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonIOException;
-
+import au.com.bytecode.opencsv.CSVReader;
+import au.com.bytecode.opencsv.CSVWriter;
+import main.CloudServiceProvider;
+import model.Disc;
 import model.Organization;
+import model.Resource;
+import model.User;
+import model.VM;
 
 
 public class OrganizationsIO {
-static Gson gson = new Gson();
+	private static ArrayList<String[]> data;
 	
-	public static ArrayList<Organization> fromFile() throws FileNotFoundException {
-		String path = "././data/organizations.json";
-	    BufferedReader bufferedReader = new BufferedReader(new FileReader(path));
-	    Gson gson = new Gson();
-	    Organization[] json = gson.fromJson(bufferedReader, Organization[].class);
-	    ArrayList<Organization> org = new ArrayList<Organization>();
-	    Collections.addAll(org, json);
-	    return org;
+	public static void setData(ArrayList<Organization> list)
+	{
+		data = new ArrayList<String[]>();
+		data.add(new String[]{"name","description","imagePath","users","resources"});
+		for (Organization obj: list)
+		{
+			data.add(new String[]{obj.getName(), obj.getDescription(), obj.getImagePath(), usersToString(obj.getUsers()), resourcesToString(obj.getResources())});
+		}
+	}
+	
+	//format je name1;name2
+	private static String resourcesToString(ArrayList<Resource> resources) {
+		String retVal = "";
+		for (Resource r : resources) {
+			retVal += r.getName() +";";
+		}
+		return retVal.substring(0, retVal.length() - 1);
+	}
+	
+	// format je mail1;mail2;mail3
+	private static String usersToString(ArrayList<User> users) {
+		String retVal = "";
+		for (User u : users) {
+			retVal += u.getEmail() + ";";
+		}
+		return retVal.substring(0, retVal.length() - 1);
+	}
+	
+	
+	public static void toFile(ArrayList<Organization> list) throws IOException {	
+		String csvNewFile = "././data/organizations.csv";
+		CSVWriter writer = new CSVWriter(new FileWriter(csvNewFile));
+		setData(list);
+		writer.writeAll(data);
+		writer.close();
 		
 	}
 	
-	public static void toFile(ArrayList<Organization> list) throws JsonIOException, IOException {	
-		FileWriter fw = new FileWriter("././data/organizations.json");					
-		gson.toJson(list, fw);
-		fw.close();
+	public static void fromFile() throws NumberFormatException, IOException {
+		String csvFileName = "././data/organizations.csv";
+		CSVReader reader = new CSVReader(new FileReader(csvFileName),',','"',1);
+		String[] row = null;
+		
+		while((row = reader.readNext()) != null) {
+			String name = row[0];
+			String description = row[1];
+			String imagePath = row[2];
+			ArrayList<User> users = usersFromString(row[3]);
+			ArrayList<Resource> resources = resourcesFromString(row[4]);
+
+			Organization o = new Organization(name, description, imagePath, users, resources);
+			for (User u : users) {
+				u.setOrganization(o);
+			}
+			CloudServiceProvider.organizations.add(o);
+			
+		}
+		reader.close();
 		
 	}
+
+	private static ArrayList<Resource> resourcesFromString(String row) {
+		ArrayList<Resource> retVal = new ArrayList<Resource>();
+		String[] tokens = row.split(";");
+		for (String s : tokens) {
+			for (VM vm : CloudServiceProvider.vms) {
+				if(vm.getName().equals(s)) {
+					retVal.add(vm);
+				}
+			}
+			for (Disc d : CloudServiceProvider.discs) {
+				if(d.getName().equals(s)) {
+					retVal.add(d);
+				}
+			}		
+		}
+		return retVal;
+	}
+
+	private static ArrayList<User> usersFromString(String row) {
+		ArrayList<User> retVal = new ArrayList<User>();
+		String[] tokens = row.split(";");
+		for (String s : tokens) {
+			for (User u : CloudServiceProvider.users) {
+				if(u.getEmail().equals(s)) {
+					retVal.add(u);
+				}
+			}
+		
+		}
+		return retVal;
+	}
+
 }

@@ -5,13 +5,18 @@ import java.util.ArrayList;
 public class VM extends Resource{
 	 // jedinstveno ime
 	private CategoryVM category;
-	private ArrayList<Disc> discs;
-	private ArrayList<Activity> activities;
-	
-	
+	private ArrayList<Disc> discs = new ArrayList<Disc>();
+	private ArrayList<Activity> activities = new ArrayList<Activity>();	
 	
 	public VM() {
 		super();
+	}
+	
+	public VM(String name, CategoryVM category, ArrayList<Disc> discs) {
+		super(name);
+		//this.name = name;
+		this.category = category;
+		this.discs = discs;
 	}
 	
 	public VM(String name, CategoryVM category, ArrayList<Disc> discs, ArrayList<Activity> activities) {

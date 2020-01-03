@@ -1,36 +1,51 @@
 package io;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonIOException;
-
+import au.com.bytecode.opencsv.CSVReader;
+import au.com.bytecode.opencsv.CSVWriter;
+import main.CloudServiceProvider;
 import model.CategoryVM;
 
 public class CategoriesIO {
-static Gson gson = new Gson();
-	
-	public static ArrayList<CategoryVM> fromFile() throws FileNotFoundException {
-		String path = "././data/categories.json";
-	    BufferedReader bufferedReader = new BufferedReader(new FileReader(path));
-	    Gson gson = new Gson();
-	    CategoryVM[] json = gson.fromJson(bufferedReader, CategoryVM[].class);
-	    ArrayList<CategoryVM> cat = new ArrayList<CategoryVM>();
-	    Collections.addAll(cat, json);
-	    return cat;
+	private static ArrayList<String[]> data;
+		
+	public static void setData(ArrayList<CategoryVM> list)
+	{
+		data = new ArrayList<String[]>();
+		data.add(new String[]{"name","coreNumber","RAM","GPUcore"});
+		for (CategoryVM obj: list)
+		{
+			data.add(new String[]{obj.getName(), ""+obj.getCoreNumber(), ""+obj.getRAM(), ""+obj.getGPUcore()});
+		}
+	}
+	public static void fromFile() throws NumberFormatException, IOException {
+		String csvFileName = "././data/categories.csv";
+		CSVReader reader = new CSVReader(new FileReader(csvFileName),',','"',1);
+		String[] row = null;
+		
+		while((row = reader.readNext()) != null) {
+			String name = row[0];		
+			int coreNumber = Integer.parseInt(row[1]);
+			int RAM = Integer.parseInt(row[2]);
+			int GPUcore = Integer.parseInt(row[3]);
+			CategoryVM cvm = new CategoryVM(name, coreNumber, RAM, GPUcore);
+			CloudServiceProvider.categories.add(cvm);
+			
+		}
+		reader.close();
 		
 	}
 	
-	public static void toFile(ArrayList<CategoryVM> list) throws JsonIOException, IOException {	
-		FileWriter fw = new FileWriter("././data/categories.json");					
-		gson.toJson(list, fw);
-		fw.close();
+	public static void toFile(ArrayList<CategoryVM> list) throws IOException {	
+		String csvNewFile = "././data/categories.csv";
+		CSVWriter writer = new CSVWriter(new FileWriter(csvNewFile));
+		setData(list);
+		writer.writeAll(data);
+		writer.close();
 		
 	}
 }

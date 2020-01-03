@@ -1,37 +1,56 @@
 package io;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonIOException;
-
+import au.com.bytecode.opencsv.CSVReader;
+import au.com.bytecode.opencsv.CSVWriter;
+import main.CloudServiceProvider;
+import model.CategoryVM;
+import model.Role;
 import model.User;
 
 public class UserIO {
 
-	static Gson gson = new Gson();
+	private static ArrayList<String[]> data;
 	
-	public static ArrayList<User> fromFile() throws FileNotFoundException {
-		String path = "././data/users.json";
-	    BufferedReader bufferedReader = new BufferedReader(new FileReader(path));
-	    Gson gson = new Gson();
-	    User[] json = gson.fromJson(bufferedReader, User[].class);
-	    ArrayList<User> users = new ArrayList<User>();
-	    Collections.addAll(users, json);
-	    return users;
+	public static void setData(ArrayList<User> list)
+	{
+		data = new ArrayList<String[]>();
+		data.add(new String[]{"email","name","lastName","password","organization","role"});
+		for (User obj: list)
+		{
+			data.add(new String[]{obj.getEmail(), obj.getName(), obj.getLastName(), obj.getPassword(), obj.getOrganization().getName(), ""+obj.getRole()});
+		}
+	}
+	public static void fromFile() throws NumberFormatException, IOException {
+		String csvFileName = "././data/users.csv";
+		CSVReader reader = new CSVReader(new FileReader(csvFileName),',','"',1);
+		String[] row = null;
+		
+		while((row = reader.readNext()) != null) {
+			String email = row[0];
+			String name = row[1];
+			String lastname = row[2];
+			String password = row[3];
+			Role role = Role.valueOf(row[5]);
+
+			User u = new User(email, name,lastname, password, null, role);
+			CloudServiceProvider.users.add(u);
+			
+		}
+		reader.close();
 		
 	}
 	
-	public static void toFile(ArrayList<User> list) throws JsonIOException, IOException {	
-		FileWriter fw = new FileWriter("././data/users.json");					
-		gson.toJson(list, fw);
-		fw.close();
+	public static void toFile(ArrayList<User> list) throws IOException {	
+		String csvNewFile = "././data/users.csv";
+		CSVWriter writer = new CSVWriter(new FileWriter(csvNewFile));
+		setData(list);
+		writer.writeAll(data);
+		writer.close();
 		
 	}
 	

@@ -1,36 +1,52 @@
 package io;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonIOException;
-
+import au.com.bytecode.opencsv.CSVReader;
+import au.com.bytecode.opencsv.CSVWriter;
+import main.CloudServiceProvider;
+import model.CategoryVM;
 import model.Disc;
+import model.DiscType;
 
 public class DiscIO {
-static Gson gson = new Gson();
+	private static ArrayList<String[]> data;
 	
-	public static ArrayList<Disc> fromFile() throws FileNotFoundException {
-		String path = "././data/discs.json";
-	    BufferedReader bufferedReader = new BufferedReader(new FileReader(path));
-	    Gson gson = new Gson();
-	    Disc[] json = gson.fromJson(bufferedReader, Disc[].class);
-	    ArrayList<Disc> discs = new ArrayList<Disc>();
-	    Collections.addAll(discs, json);
-	    return discs;
+	public static void setData(ArrayList<Disc> list)
+	{
+		data = new ArrayList<String[]>();
+		data.add(new String[]{"name","type","capacity","virtualMachine"});
+		for (Disc obj: list)
+		{
+			data.add(new String[]{obj.getName(), ""+obj.getType(), ""+obj.getCapacity(), obj.getVirtualMachine().getName()});
+		}
+	}
+	public static void fromFile() throws NumberFormatException, IOException {
+		String csvFileName = "././data/discs.csv";
+		CSVReader reader = new CSVReader(new FileReader(csvFileName),',','"',1);
+		String[] row = null;
+		
+		while((row = reader.readNext()) != null) {
+			String name = row[0];		
+			DiscType type = DiscType.valueOf(row[1]);
+			int capacity = Integer.parseInt(row[2]);
+			Disc d = new Disc(name, type, capacity, null);
+			CloudServiceProvider.discs.add(d);
+			
+		}
+		reader.close();
 		
 	}
 	
-	public static void toFile(ArrayList<Disc> list) throws JsonIOException, IOException {	
-		FileWriter fw = new FileWriter("././data/discs.json");					
-		gson.toJson(list, fw);
-		fw.close();
+	public static void toFile(ArrayList<Disc> list) throws IOException {	
+		String csvNewFile = "././data/discs.csv";
+		CSVWriter writer = new CSVWriter(new FileWriter(csvNewFile));
+		setData(list);
+		writer.writeAll(data);
+		writer.close();
 		
 	}
 }
