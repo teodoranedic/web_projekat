@@ -10,6 +10,11 @@ import java.util.ArrayList;
 
 import com.google.gson.Gson;
 
+import io.CategoriesIO;
+import io.DiscIO;
+import io.OrganizationsIO;
+import io.UserIO;
+import io.VMIO;
 import model.CategoryVM;
 import model.Disc;
 import model.Organization;
@@ -29,6 +34,17 @@ public class CloudServiceProvider {
 	public static void main(String[] args) throws IOException {
 		port(8080);		
 		staticFiles.externalLocation(new File("./static").getCanonicalPath()); 
+		
+		// Ucitavanje podataka iz fajlova
+		/*
+		 categories = CategoriesIO.fromFile();
+		 discs = DiscIO.fromFile();
+		 vms = VMIO.fromFile(); // dodamo odgovarajucu kategoriju i diskove, a diskovima odg virt.masinu
+		 users = UserIO.fromFile(); 
+		 organizations = OrganizationsIO.fromFile(); 
+		 // unutar ove fje idemo kroz listu usera i dodajemo organizaciji i u isto vreme i tom useru dodajemo organizaciju
+		 // isto i za resurse
+		 */
 		
 		post("/rest/login", (req, res) -> {
 			res.type("application/json");
