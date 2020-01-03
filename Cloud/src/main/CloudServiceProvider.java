@@ -10,6 +10,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import io.CategoriesIO;
 import io.DiscIO;
@@ -24,6 +25,7 @@ import model.Resource;
 import model.Role;
 import model.User;
 import model.VM;
+import utility.Logging;
 
 public class CloudServiceProvider {
 	
@@ -96,8 +98,15 @@ public class CloudServiceProvider {
 		post("/rest/login", (req, res) -> {
 			res.type("application/json");
 			String text = req.body(); // ovde imamo {"email":"nesto","password":"nesto"}
-			System.out.println(text);
-			return " okyy";
+			JsonObject jsonObject = new JsonObject();
+			jsonObject.addProperty("success", false);
+			if(Logging.checkLogIn(text))
+			{
+				res.status(200);
+				return jsonObject;
+			}
+			res.status(400);
+			return jsonObject;
 		});
 
 	}
