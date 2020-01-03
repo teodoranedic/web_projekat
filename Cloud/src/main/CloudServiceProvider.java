@@ -91,7 +91,6 @@ public class CloudServiceProvider {
 		 OrganizationsIO.fromFile(); 
 
 		
-		CategoriesIO.fromFile();
 		System.out.println(categories.size());
 		
 		post("/rest/login", (req, res) -> {
