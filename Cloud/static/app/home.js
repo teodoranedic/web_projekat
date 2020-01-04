@@ -6,45 +6,51 @@ Vue.component("home-page", {
 	},
 	template: ` 
 		<div>
+		<div class="container">
 			<p>
-				<a href="#/" v-on:click="logout()"> Logout </a>
+				<a href="#/" class="btn btn-primary btn-lg" tabindex="-1" role="button" v-on:click="logout()"> Logout </a>
 			</p>
 			<p>
-				<a href="#/account"> Account</a>
+				<a href="#/account" class="btn btn-primary btn-lg disabled" tabindex="-1" role="button" aria-disabled="true" > Account</a>
 			</p>
 			<p>
-				<a href="#/org"> Organizations</a>
+				<a href="#/org" class="btn btn-primary btn-lg disabled" tabindex="-1" role="button" aria-disabled="true"> Organizations</a>
 			</p>
 			<p>
-				<a href="#/users"> Users</a>
+				<a href="#/users" class="btn btn-primary btn-lg disabled" tabindex="-1" role="button" aria-disabled="true"> Users</a>
 			</p>
 			<p>
-				<a href="#/vms"> Virtual machines</a>
+				<a href="#/vms" class="btn btn-primary btn-lg disabled" tabindex="-1" role="button" aria-disabled="true"> Virtual machines</a>
 			</p>
 			<p>
-				<a href="#/discs"> Discs</a>
+				<a href="#/discs" class="btn btn-primary btn-lg disabled" tabindex="-1" role="button" aria-disabled="true"> Discs</a>
 			</p>
 			<p>
-				<a href="#/cat"> Categories</a>
+				<a href="#/cat" class="btn btn-primary btn-lg disabled" tabindex="-1" role="button" aria-disabled="true"> Categories</a>
 			</p>
-			
-			Virtual machines:
-			<table border="1">
-				<tr bgcolor="lightgrey">
+			</div>
+		</br>
+			<table class="table table-striped">
+			<thead>
+				<tr>
 					<th>Name</th>
 					<th>Core number</th>
 					<th>RAM</th>
 					<th>GPU</th>
 					<th>Organization</th>
 				</tr>
+			</thead>
+			<tbody>
 					
 				<tr v-for="m in vm">
 					<td>{{m.name }}</td>
 					<td>{{m.category.coreNumber}}</td>
 					<td>{{m.category.RAM}}</td>
 					<td>{{m.category.GPUcore}}</td>
+					<td>/</td>
 
 				</tr>
+			</tbody>
 			</table>
 
 		</div>		  

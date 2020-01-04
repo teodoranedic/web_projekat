@@ -37,12 +37,12 @@ Vue.component("log-in", {
       </svg>
       <div class="form">
       
-        <label for="email" >Email</label>
-        <input type="text" id="email" v-model="loginData.email">
+        <label for="email">Email</label>
+        <input type="text" id="email" v-model="loginData.email" required>
         <label for="password">Password</label>
-        <input type="password" id="password" v-model="loginData.password">
+        <input type="password" id="password" v-model="loginData.password" required>
         {{greska}}
-		<input type="submit" id="submit" value="Log in" v-on:click="logIn(loginData)">	
+		<input class="btn" type="submit" id="submit" value="Log in" v-on:click="logIn(loginData)">	
       </div>
     </div>
   </div>
