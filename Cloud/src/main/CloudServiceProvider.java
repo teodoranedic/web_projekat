@@ -20,10 +20,7 @@ import io.UserIO;
 import io.VMIO;
 import model.CategoryVM;
 import model.Disc;
-import model.DiscType;
 import model.Organization;
-import model.Resource;
-import model.Role;
 import model.User;
 import model.VM;
 import spark.Session;
@@ -42,42 +39,7 @@ public class CloudServiceProvider {
 	public static void main(String[] args) throws IOException {
 		port(8080);		
 		staticFiles.externalLocation(new File("./static").getCanonicalPath()); 
-		/*
-		CategoryVM c1 = new CategoryVM("c1",4,500,2);
-		CategoryVM c2 = new CategoryVM("c2",8,1000,2);
-		categories.add(c1);
-		categories.add(c2);
 		
-		Disc d1 = new Disc("d1",DiscType.HDD,1000, null);
-		Disc d2 = new Disc("d2",DiscType.SSD,500, null);
-		discs.add(d1);
-		discs.add(d1);
-		
-		VM vm1 = new VM("vm1",c1,discs);
-		d1.setVirtualMachine(vm1);
-		d2.setVirtualMachine(vm1);
-		vms.add(vm1);
-		
-		User u1 = new User("super@admin.com","Admin","Admin","superadmin", null, Role.SUPERADMIN);
-		User u2 = new User("user1@mail.com","Marko","Markovic","user1",null, Role.USER);
-		users.add(u1);
-		users.add(u2);
-		
-		ArrayList<Resource> res1 = new ArrayList<Resource>();
-		res1.add(d1);
-		res1.add(vm1);		
-		Organization o1 = new Organization("org1","lalala","path",users,res1);
-		organizations.add(o1);
-		u1.setOrganization(o1);
-		u2.setOrganization(o1);
-		
-		// upis u fajl
-		CategoriesIO.toFile(categories);
-		DiscIO.toFile(discs);
-		VMIO.toFile(vms);
-		UserIO.toFile(users);
-		OrganizationsIO.toFile(organizations);
-		*/
 		// Ucitavanje podataka iz fajlova
 	
 		 CategoriesIO.fromFile();
@@ -95,7 +57,6 @@ public class CloudServiceProvider {
 		 OrganizationsIO.fromFile(); 
 
 		
-		System.out.println(categories.size());
 		
 		post("/rest/login", (req, res) -> {
 			res.type("application/json");
@@ -116,17 +77,37 @@ public class CloudServiceProvider {
 			res.status(400);
 			return jsonObject;
 		});
-		// proveriti da li radi
+
 		get("/rest/logout", (req, res) -> {
 			res.type("application/json");
 			Session ss = req.session(true);
 			User user = ss.attribute("user");
 			
 			if (user != null) {
+				ss.attribute("user", null);
 				ss.invalidate();
 			}
 			return true;
 		});
+		
+		get("/rest/testlogin", (req, res) -> {
+			Session ss = req.session(true);
+			User user = ss.attribute("user");
+			
+			if (user == null) {
+				res.status(400);
+				return "No user logged in.";  
+			} else {
+				res.status(200);
+				return "User " + user + " logged in.";
+			}
+		});
+		
+		get("/rest/getAllVM", (req, res) -> {
+			res.type("application/json");			
+			return g.toJson(vms);
+		});
+		
 
 	}
 
