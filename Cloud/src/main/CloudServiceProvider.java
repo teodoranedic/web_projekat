@@ -1,5 +1,6 @@
 package main;
 
+import static spark.Spark.get;
 import static spark.Spark.port;
 import static spark.Spark.post;
 import static spark.Spark.staticFiles;
@@ -25,6 +26,7 @@ import model.Resource;
 import model.Role;
 import model.User;
 import model.VM;
+import spark.Session;
 import utility.Logging;
 
 public class CloudServiceProvider {
@@ -99,14 +101,31 @@ public class CloudServiceProvider {
 			res.type("application/json");
 			String text = req.body(); // ovde imamo {"email":"nesto","password":"nesto"}
 			JsonObject jsonObject = new JsonObject();
-			jsonObject.addProperty("success", false);
-			if(Logging.checkLogIn(text))
+			User u = Logging.checkLogIn(text);
+			if(u != null)
 			{
+				Session ss = req.session(true);
+				User user = ss.attribute("user");
+				if (user == null) {
+					user = u;
+					ss.attribute("user", user);
+				}
 				res.status(200);
 				return jsonObject;
 			}
 			res.status(400);
 			return jsonObject;
+		});
+		// proveriti da li radi
+		get("/rest/logout", (req, res) -> {
+			res.type("application/json");
+			Session ss = req.session(true);
+			User user = ss.attribute("user");
+			
+			if (user != null) {
+				ss.invalidate();
+			}
+			return true;
 		});
 
 	}

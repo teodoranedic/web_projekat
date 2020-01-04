@@ -1,6 +1,7 @@
 //const WebShop = { template: '<web-shop></web-shop>' }
 //const ShoppingCart = { template: '<shopping-cart></shopping-cart>' }
 const LogIn = {template: '<log-in></log-in>'}
+const HomePage = {template: '<home-page></home-page>'}
 
 const router = new VueRouter({
 	  mode: 'hash',
@@ -8,7 +9,8 @@ const router = new VueRouter({
 	    //{ path: '/', component: WebShop},
 	    //{ path: '/sc', component: ShoppingCart }
 		  {path: '/', component: LogIn},
-		  {path: '/page', component: LogIn}
+		  {path: '/page', component: HomePage}
+		  
 	  ]
 });
 

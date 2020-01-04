@@ -5,7 +5,7 @@ import model.User;
 
 public class Logging {
 	
-	public static boolean checkLogIn(String data)
+	public static User checkLogIn(String data)
 	{
 		// {"email" : "mail", "password" : "pass"}
 		String[] tokens = data.split(",");
@@ -18,10 +18,10 @@ public class Logging {
 		{
 			if (u.getEmail().equals(email) && u.getPassword().equals(password))
 			{
-				return true;
+				return u;
 			}	
 		}
-		return false;
+		return null;
 	}
 
 }
