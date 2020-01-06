@@ -1,5 +1,6 @@
 package main;
 
+import static spark.Spark.delete;
 import static spark.Spark.get;
 import static spark.Spark.port;
 import static spark.Spark.post;
@@ -106,6 +107,54 @@ public class CloudServiceProvider {
 		get("/rest/getAllVM", (req, res) -> {
 			res.type("application/json");			
 			return g.toJson(vms);
+		});
+		
+		get("/rest/getAllOrg", (req, res) -> {
+			res.type("application/json");
+			return g.toJson(organizations);
+		});
+		
+		get("/rest/getOrg/:name", (req, res) -> {
+			res.type("application/json");
+			String name = req.params("name");
+			for (Organization o : organizations) {
+				if (o.getName().equals(name))
+					return g.toJson(o);
+			}
+			return "";
+		});
+		
+		// treba proveriti
+		delete("/rest/deleteOrg/:name", (req, res) ->{
+			res.type("application/json");
+			Organization data = g.fromJson(req.body(), Organization.class);
+			String name = req.params("name");
+			for(Organization o : organizations)
+			{
+				if(o.getName().equals(name)) {
+					organizations.remove(o);
+					break;
+				}
+			}
+			OrganizationsIO.toFile(organizations);
+			return "OK";
+		});
+		
+		post("/rest/addOrg", (req, res) -> {
+			res.type("application/json");
+			Organization data = g.fromJson(req.body(), Organization.class);
+			// proveriti da li je ime jedinstveno
+			if(utility.Check.OrganizationNameUnique(data.getName()))
+			{
+				organizations.add(data);
+				OrganizationsIO.toFile(organizations);
+				res.status(200);
+				return "OK";
+			}
+			
+			res.status(400);
+			return "OK";
+			
 		});
 		
 

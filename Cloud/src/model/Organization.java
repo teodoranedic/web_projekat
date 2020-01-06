@@ -7,8 +7,8 @@ public class Organization {
 	private String description;
 	private String imagePath;
 	
-	private ArrayList<User> users = new ArrayList<User>();
-	private ArrayList<Resource> resources = new ArrayList<Resource>();
+	private transient ArrayList<User> users = new ArrayList<User>();
+	private transient ArrayList<Resource> resources = new ArrayList<Resource>();
 	
 	public Organization(String name, String description, String imagePath, ArrayList<User> users,
 			ArrayList<Resource> resources) {

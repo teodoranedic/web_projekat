@@ -1,2 +1,4 @@
 "name","description","imagePath","users","resources"
-"org1","lalala","path","super@admin.com;user1@mail.com","d1;vm1"
+"org1","lalala","logo1.jpg","super@admin.com","d1;d1;d1;d1;vm1"
+"org2","fgjsnsjd","C:fakepathlogo1.jpg","",""
+"org3","gfjdgnf",,"",""

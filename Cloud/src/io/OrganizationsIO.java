@@ -30,20 +30,29 @@ public class OrganizationsIO {
 	
 	//format je name1;name2
 	private static String resourcesToString(ArrayList<Resource> resources) {
-		String retVal = "";
-		for (Resource r : resources) {
-			retVal += r.getName() +";";
+		if(resources.size() != 0)
+		{
+			String retVal = "";
+			for (Resource r : resources) {
+				retVal += r.getName() +";";
+			}
+			return retVal.substring(0, retVal.length() - 1);
 		}
-		return retVal.substring(0, retVal.length() - 1);
+		return "";
+		
 	}
 	
 	// format je mail1;mail2;mail3
 	private static String usersToString(ArrayList<User> users) {
-		String retVal = "";
-		for (User u : users) {
-			retVal += u.getEmail() + ";";
+		if(users.size() != 0)
+		{
+			String retVal = "";
+			for (User u : users) {
+				retVal += u.getEmail() + ";";
+			}
+			return retVal.substring(0, retVal.length() - 1);
 		}
-		return retVal.substring(0, retVal.length() - 1);
+		return "";
 	}
 	
 	

@@ -11,10 +11,10 @@ Vue.component("home-page", {
 				<a href="#/" class="btn btn-primary btn-lg" tabindex="-1" role="button" v-on:click="logout()"> Logout </a>
 			</p>
 			<p>
-				<a href="#/account" class="btn btn-primary btn-lg disabled" tabindex="-1" role="button" aria-disabled="true" > Account</a>
+				<a href="#/account" class="btn btn-primary btn-lg disabled" tabindex="-1" role="button" aria-disabled="true"  > Account</a>
 			</p>
 			<p>
-				<a href="#/org" class="btn btn-primary btn-lg disabled" tabindex="-1" role="button" aria-disabled="true"> Organizations</a>
+				<a href="#/org" class="btn btn-primary btn-lg" tabindex="-1" role="button"> Organizations</a>
 			</p>
 			<p>
 				<a href="#/users" class="btn btn-primary btn-lg disabled" tabindex="-1" role="button" aria-disabled="true"> Users</a>
@@ -62,6 +62,7 @@ Vue.component("home-page", {
 				.get('rest/logout')
 				.then((res) => res.data)
 			}
+			
 		},
 		mounted () {
 			axios
@@ -78,5 +79,6 @@ Vue.component("home-page", {
 	        axios
 	          .get('rest/getAllVM')
 	          .then(res => (this.vm = res.data))
+	        
 	    },
 	});
