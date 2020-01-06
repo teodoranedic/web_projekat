@@ -12,10 +12,10 @@ Vue.component("home-page", {
 				<a href="#/" class="btn btn-primary btn-lg" tabindex="-1" role="button" v-on:click="logout()"> Logout </a>
 			</p>
 			<p>
-				<a href="#/account" class="btn btn-primary btn-lg disabled" tabindex="-1" role="button" aria-disabled="true"  > Account</a>
+				<a href="#/account" class="btn btn-primary btn-lg" tabindex="-1" role="button" > Account</a>
 			</p>
 			<p>
-				<a href="#/org" v-if="role=='SUPERADMIN'" class="btn btn-primary btn-lg" tabindex="-1" role="button"> Organizations</a>
+				<a href="#/org" v-if="role!='USER'" class="btn btn-primary btn-lg" tabindex="-1" role="button"> Organizations</a>
 			</p>
 			<p>
 				<a href="#/users"   class="btn btn-primary btn-lg" tabindex="-1" role="button"> Users</a>
@@ -27,7 +27,7 @@ Vue.component("home-page", {
 				<a href="#/discs" class="btn btn-primary btn-lg disabled" tabindex="-1" role="button" aria-disabled="true"> Discs</a>
 			</p>
 			<p>
-				<a href="#/cat" v-if="role=='SUPERADMIN'" class="btn btn-primary btn-lg disabled" tabindex="-1" role="button" aria-disabled="true"> Categories</a>
+				<a href="#/cat" v-if="role=='SUPERADMIN'" class="btn btn-primary btn-lg" tabindex="-1" role="button"> Categories</a>
 			</p>
 			<p>
 				<a href="#/cat" v-if="role=='ADMIN'" class="btn btn-primary btn-lg disabled" tabindex="-1" role="button" aria-disabled="true"> Monthly check</a>

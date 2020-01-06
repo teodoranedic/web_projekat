@@ -23,6 +23,7 @@ import io.VMIO;
 import model.CategoryVM;
 import model.Disc;
 import model.Organization;
+import model.Role;
 import model.User;
 import model.VM;
 import spark.Session;
@@ -101,7 +102,7 @@ public class CloudServiceProvider {
 				return "No user logged in.";  
 			} else {
 				res.status(200);
-				return "User " + user + " logged in.";
+				return user.getEmail();
 			}
 		});
 		
@@ -125,7 +126,15 @@ public class CloudServiceProvider {
 		
 		get("/rest/getAllOrg", (req, res) -> {
 			res.type("application/json");
-			return g.toJson(organizations);
+			Session ss = req.session(true);
+			User user = ss.attribute("user");
+			if(user.getRole() == Role.SUPERADMIN)
+				return g.toJson(organizations);
+			else {
+				ArrayList<Organization> adminOrg = new ArrayList<Organization>();
+				adminOrg.add(user.getOrganization());
+				return g.toJson(adminOrg);
+			}
 		});
 		
 		get("/rest/getOrg/:name", (req, res) -> {
@@ -191,6 +200,143 @@ public class CloudServiceProvider {
 			//potrebno upisati i korisnike ponovo jer imaju referencu na organizaciju
 			OrganizationsIO.toFile(organizations);
 			UserIO.toFile(users);
+			res.status(200);
+			return "OK";
+
+		});
+		
+		get("rest/getAccount", (req,res) -> {
+			Session ss = req.session(true);
+			User user = ss.attribute("user");
+
+			if (user == null) {
+				res.status(400);
+				return "";  
+			} else {
+				res.status(200);
+				return g.toJson(user);
+			}
+			
+		});
+		
+		delete("rest/deleteAcc/:id", (req,res) -> {
+			res.type("application/json");
+			User data = g.fromJson(req.body(), User.class);
+			String email = req.params("id");
+			for(User u : users)
+			{
+				if(u.getEmail().equals(email)) {
+					users.remove(u);
+					req.session(true).invalidate();
+					break;
+				}
+			}
+			UserIO.toFile(users);
+			return "OK";
+			
+		});
+		
+		put("rest/editAcc/:id", (req,res) -> {
+			res.type("application/json");
+			User data = g.fromJson(req.body(), User.class);
+			String email = req.params("id");
+			for(User u : users)
+			{
+				if(u.getEmail().equals(email)) {
+					if(!email.equals(data.getEmail()) && !utility.Check.UserUnique(data.getEmail())) {
+						res.status(400);
+						return "New email already has an account.";
+					}
+					u.setEmail(data.getEmail());
+					u.setName(data.getName());
+					u.setLastName(data.getLastName());
+					u.setPassword(data.getPassword());
+					
+					break;
+				}
+			}
+			UserIO.toFile(users);
+			OrganizationsIO.toFile(organizations);
+			res.status(200);
+			return "OK";
+			
+		});
+		
+		get("/rest/getAllCat", (req, res) -> {
+			res.type("application/json");			
+			return g.toJson(categories);
+		});
+		
+		get("/rest/getCat/:name", (req, res) -> {
+			res.type("application/json");
+			String name = req.params("name");
+			for (CategoryVM c : categories) {
+				if (c.getName().equals(name))
+					return g.toJson(c);
+			}
+			return "";
+		});
+		
+		delete("/rest/deleteCat/:name", (req, res) ->{
+			res.type("application/json");
+			CategoryVM data = g.fromJson(req.body(), CategoryVM.class);
+			String name = req.params("name");
+			for(CategoryVM c : categories)
+			{
+				if(c.getName().equals(name)) {
+					// ako postoji vm zakacena, vraca se greska
+					for (VM vm : vms) {
+						if(vm.getCategory().equals(c)) {
+							res.status(400);
+							return "ERROR: At least one virtual machine has this category.";
+						}
+					}
+					categories.remove(c);
+					break;
+				}
+			}
+			CategoriesIO.toFile(categories);
+			res.status(200);
+			return "OK";
+		});
+		
+		post("/rest/addCat", (req, res) -> {
+			res.type("application/json");
+			CategoryVM data = g.fromJson(req.body(), CategoryVM.class);
+
+			// proveriti da li je ime jedinstveno
+			if(utility.Check.CategoryNameUnique(data.getName()))
+			{
+				categories.add(data);
+				CategoriesIO.toFile(categories);
+				res.status(200);
+				return "OK";
+			}			
+			res.status(400);
+			return "OK";
+			
+		});
+		
+		put("rest/editCat/:name", (req, res) ->{
+			res.type("application/json");
+			CategoryVM data = g.fromJson(req.body(), CategoryVM.class);
+			String name = req.params("name");
+			for(CategoryVM c : categories)
+			{
+				if(c.getName().equals(name)) {
+					if(!name.equals(data.getName()) && !utility.Check.CategoryNameUnique(data.getName())) {
+						res.status(400);
+						return "New name is not unique.";
+					}
+					c.setName(data.getName());
+					c.setCoreNumber(data.getCoreNumber());
+					c.setRAM(data.getRAM());
+					c.setGPUcore(data.getGPUcore());
+					break;
+				}
+			}
+			CategoriesIO.toFile(categories);
+			VMIO.toFile(vms);
 			res.status(200);
 			return "OK";
 
