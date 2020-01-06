@@ -1,7 +1,8 @@
 Vue.component("home-page", {
 	data: function () {
 		    return {
-		      vm: null
+		      vm: null,
+		      role: null
 		    }
 	},
 	template: ` 
@@ -14,10 +15,10 @@ Vue.component("home-page", {
 				<a href="#/account" class="btn btn-primary btn-lg disabled" tabindex="-1" role="button" aria-disabled="true"  > Account</a>
 			</p>
 			<p>
-				<a href="#/org" class="btn btn-primary btn-lg" tabindex="-1" role="button"> Organizations</a>
+				<a href="#/org" v-if="role=='SUPERADMIN'" class="btn btn-primary btn-lg" tabindex="-1" role="button"> Organizations</a>
 			</p>
 			<p>
-				<a href="#/users" class="btn btn-primary btn-lg disabled" tabindex="-1" role="button" aria-disabled="true"> Users</a>
+				<a href="#/users"   class="btn btn-primary btn-lg" tabindex="-1" role="button"> Users</a>
 			</p>
 			<p>
 				<a href="#/vms" class="btn btn-primary btn-lg disabled" tabindex="-1" role="button" aria-disabled="true"> Virtual machines</a>
@@ -26,7 +27,10 @@ Vue.component("home-page", {
 				<a href="#/discs" class="btn btn-primary btn-lg disabled" tabindex="-1" role="button" aria-disabled="true"> Discs</a>
 			</p>
 			<p>
-				<a href="#/cat" class="btn btn-primary btn-lg disabled" tabindex="-1" role="button" aria-disabled="true"> Categories</a>
+				<a href="#/cat" v-if="role=='SUPERADMIN'" class="btn btn-primary btn-lg disabled" tabindex="-1" role="button" aria-disabled="true"> Categories</a>
+			</p>
+			<p>
+				<a href="#/cat" v-if="role=='ADMIN'" class="btn btn-primary btn-lg disabled" tabindex="-1" role="button" aria-disabled="true"> Monthly check</a>
 			</p>
 			</div>
 		</br>
@@ -79,6 +83,11 @@ Vue.component("home-page", {
 	        axios
 	          .get('rest/getAllVM')
 	          .then(res => (this.vm = res.data))
+	          
+	        axios
+	        	.get('rest/getRole')
+	        	.then(res => (this.role = res.data))
+	        
 	        
 	    },
 	});

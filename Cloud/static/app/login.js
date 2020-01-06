@@ -58,19 +58,10 @@ Vue.component("log-in", {
 			        this.greska = '';
 					this.$router.push('/page');
 				}
-				
-				
-				 // prelazi na drugi path sa push
 			})
 			.catch((res)=>{
-				//this.$router.push('/page')
 				this.greska = 'Wrong email or password'
 			})
-			
-
-			
-			// naci kako se implementira logika da predje na drugu stranicu ukoliko je response OK, a ostane na istoj i ispise poruku 
-			// ukoliko nije ok
 			
 		}
 	},

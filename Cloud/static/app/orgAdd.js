@@ -2,7 +2,10 @@ Vue.component("orgAdd-page", {
 	data: function () {
 		    return {
 		    	orgData : {},
-		    	greska : ''
+		    	greska : '',
+		        nameErr: '',
+		        descErr: '',
+		        imageErr: ''
 		    }
 	},
 	template: ` 
@@ -15,20 +18,23 @@ Vue.component("orgAdd-page", {
 				<tr>
 					<td>Name</td>
 					<td><input type="text"  v-model="orgData.name" required/></td>
+					<td style="color: red">{{nameErr}}</td>
 				</tr>
 				<tr>
 					<td>Description</td>
 					<td><input type="text"  v-model="orgData.description" required /></td>
+					<td style="color: red">{{descErr}}</td>
 				</tr>
 				<tr>
 					<td>Logo</td>
-					<td><input type="file" v-on="orgData.imagePath" required/></td>
+					<td><input type="file" @change="onUpload" required/></td>
+					<td style="color: red">{{imageErr}}</td>
 				</tr>
 			</tbody>
 			</table>
 			
 			<a href="#/org" class="btn btn-primary btn-lg" tabindex="-1" role="button" v-on:click="cancel()"> Cancel </a>
-			<a href="#/org" class="btn btn-primary btn-lg" tabindex="-1" role="button" v-on:click="save(orgData)"> Save </a>
+			<a class="btn btn-primary btn-lg" tabindex="-1" role="button" v-on:click="save(orgData)"> Save </a>
 
 
 
@@ -43,6 +49,13 @@ Vue.component("orgAdd-page", {
 			},
 			
 			save : function (orgData) {
+				if(!this.orgData.name)
+					this.nameErr = 'Name cannot be blank.';
+				if(!this.orgData.description)
+					this.descErr = 'Description cannot be blank.';
+				if(this.orgData.imagePath = null)
+					this.imageErr = 'Choose a file for logo.';
+				if(this.orgData.name && this.orgData.description && this.orgData.imagePath){
 				axios
 				.post('rest/addOrg', {"name": orgData.name, "description": orgData.description, "imagePath": orgData.imagePath})
 				.then((res) => {
@@ -50,16 +63,18 @@ Vue.component("orgAdd-page", {
 				        this.greska = '';
 						this.$router.push('/org');
 					}
-					
-					
-					 // prelazi na drugi path sa push
+
 				})
 				.catch((res)=>{
-					//this.$router.push('/page')
 					// ne radi kako treba
 					this.greska = 'Error'
 				})
 			}
+			},
+			onUpload(event) {
+				this.orgData.imagePath = (event.target.files)[0].name;
+			
+		}
 		},
 		mounted () {
 			axios

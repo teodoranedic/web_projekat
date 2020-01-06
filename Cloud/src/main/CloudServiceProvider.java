@@ -4,6 +4,7 @@ import static spark.Spark.delete;
 import static spark.Spark.get;
 import static spark.Spark.port;
 import static spark.Spark.post;
+import static spark.Spark.put;
 import static spark.Spark.staticFiles;
 
 import java.io.File;
@@ -104,6 +105,19 @@ public class CloudServiceProvider {
 			}
 		});
 		
+		get("/rest/getRole", (req, res) ->{
+			Session ss = req.session(true);
+			User user = ss.attribute("user");
+
+			if (user == null) {
+				res.status(400);
+				return "";  
+			} else {
+				res.status(200);
+				return user.getRole().toString();
+			}
+		});
+		
 		get("/rest/getAllVM", (req, res) -> {
 			res.type("application/json");			
 			return g.toJson(vms);
@@ -143,6 +157,7 @@ public class CloudServiceProvider {
 		post("/rest/addOrg", (req, res) -> {
 			res.type("application/json");
 			Organization data = g.fromJson(req.body(), Organization.class);
+
 			// proveriti da li je ime jedinstveno
 			if(utility.Check.OrganizationNameUnique(data.getName()))
 			{
@@ -150,13 +165,36 @@ public class CloudServiceProvider {
 				OrganizationsIO.toFile(organizations);
 				res.status(200);
 				return "OK";
-			}
-			
+			}			
 			res.status(400);
 			return "OK";
 			
 		});
 		
+		put("rest/editOrg/:name", (req, res) ->{
+			res.type("application/json");
+			Organization data = g.fromJson(req.body(), Organization.class);
+			String name = req.params("name");
+			for(Organization o : organizations)
+			{
+				if(o.getName().equals(name)) {
+					if(!name.equals(data.getName()) && !utility.Check.OrganizationNameUnique(data.getName())) {
+						res.status(400);
+						return "New name is not unique.";
+					}
+					o.setName(data.getName());
+					o.setDescription(data.getDescription());
+					o.setImagePath(data.getImagePath());					
+					break;
+				}
+			}
+			//potrebno upisati i korisnike ponovo jer imaju referencu na organizaciju
+			OrganizationsIO.toFile(organizations);
+			UserIO.toFile(users);
+			res.status(200);
+			return "OK";
+
+		});
 
 	}
 
