@@ -417,22 +417,30 @@ public class CloudServiceProvider {
 		post("rest/addUser", (req, res) ->{
 			res.type("application/json");
 			User data = g.fromJson(req.body(), User.class);
+			Session ss = req.session(true);
+			User currentUser = ss.attribute("user");
 			if(utility.Check.UserUnique(data.getEmail()))
 			{
-				
-				for(Organization o :organizations)
+				if(currentUser.getRole() == Role.ADMIN)
 				{
-					if(o.getName().equals(data.getOrganization().getName()))
-					{
-						data.setOrganization(o);
-						users.add(data);
-						o.addUser(data);
-						res.status(200);
-						UserIO.toFile(users);
-						OrganizationsIO.toFile(organizations);
-						return "OK";
-					}
+					data.setOrganization(currentUser.getOrganization());
+				
 				}
+					for(Organization o :organizations)
+					{
+						if(o.getName().equals(data.getOrganization().getName()))
+						{
+							data.setOrganization(o);
+							users.add(data);
+							o.addUser(data);
+							res.status(200);
+							UserIO.toFile(users);
+							OrganizationsIO.toFile(organizations);
+							return "OK";
+						}
+					}
+				
+				
 			}
 			res.status(400);
 			return "NIJE OK";
