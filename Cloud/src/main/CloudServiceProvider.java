@@ -227,11 +227,17 @@ public class CloudServiceProvider {
 			{
 				if(u.getEmail().equals(email)) {
 					users.remove(u);
+					for(Organization o : organizations)
+					{
+						if(o.getUsers().contains(u))
+							o.getUsers().remove(u);
+					}
 					req.session(true).invalidate();
 					break;
 				}
 			}
 			UserIO.toFile(users);
+			OrganizationsIO.toFile(organizations);
 			return "OK";
 			
 		});
@@ -341,6 +347,97 @@ public class CloudServiceProvider {
 			return "OK";
 
 		});
+		
+		get("rest/getAllUser", (req, res) ->{
+			res.type("application/json");
+			Session ss = req.session(true);
+			User user = ss.attribute("user");
+			if(user.getRole() == Role.SUPERADMIN)
+				return g.toJson(users);
+			else {
+				ArrayList<User> adminUsers = new ArrayList<User>();
+				for(User u : users)
+					if(u.getOrganization().getName().equals(user.getOrganization().getName()))
+					{
+						adminUsers.add(u);
+					}
+				return g.toJson(adminUsers);
+			}
+		});
+		
+		get("rest/getUser/:email", (req, res)-> {
+			res.type("application/json");
+			String email = req.params("email");
+			for (User u : users) {
+				if (u.getEmail().equals(email))
+					return g.toJson(u);
+			}
+			return "";
+		});
+		
+		put("rest/editUser/:email", (req, res)->{
+			res.type("application/json");
+			User data =  g.fromJson(req.body(), User.class);
+			String email = req.params("email");
+			for(User u : users) {
+				if(u.getEmail().equals(email))
+				{
+					u.setName(data.getName());
+					u.setLastName(data.getLastName());
+					u.setPassword(data.getPassword());
+					u.setRole(data.getRole());
+					break;
+				}
+			}
+			UserIO.toFile(users);
+			return "";
+		});
+		
+		delete("rest/deleteUser/:email", (req, res) ->{
+			res.type("application/json");
+			User data = g.fromJson(req.body(), User.class);
+			String email = req.params("email");
+			for(User u : users)
+			{
+				if(u.getEmail().equals(email)) {
+					users.remove(u);
+					for(Organization o : organizations)
+					{
+						if(o.getUsers().contains(u))
+							o.getUsers().remove(u);
+					}
+					break;
+				}
+			}
+			UserIO.toFile(users);
+			OrganizationsIO.toFile(organizations);
+			return "OK";
+		});
+		
+		post("rest/addUser", (req, res) ->{
+			res.type("application/json");
+			User data = g.fromJson(req.body(), User.class);
+			if(utility.Check.UserUnique(data.getEmail()))
+			{
+				
+				for(Organization o :organizations)
+				{
+					if(o.getName().equals(data.getOrganization().getName()))
+					{
+						data.setOrganization(o);
+						users.add(data);
+						o.addUser(data);
+						res.status(200);
+						UserIO.toFile(users);
+						OrganizationsIO.toFile(organizations);
+						return "OK";
+					}
+				}
+			}
+			res.status(400);
+			return "NIJE OK";
+		});
+
 
 	}
 

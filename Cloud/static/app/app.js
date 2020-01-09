@@ -8,6 +8,9 @@ const Account = {template: '<account></account>'}
 const Categories = {template: '<categories></categories>'}
 const CatEdit = {template: '<catEdit-page></catEdit-page>'}
 const CatAdd = {template: '<catAdd-page></catAdd-page>'}
+const Users = {template: '<users-page></users-page>'}
+const UserEdit = {template: '<userEdit-page></userEdit-page>'}
+const UserAdd = {template: '<userAdd-page></userAdd-page>'}
 
 const router = new VueRouter({
 	  mode: 'hash',
@@ -20,7 +23,10 @@ const router = new VueRouter({
 		  {path: '/account', component: Account},
 		  {path: '/cat', component: Categories},
 		  {path: '/cat/edit/:name', component: CatEdit},
-		  {path: '/addCategory', component: CatAdd}
+		  {path: '/addCategory', component: CatAdd},
+		  {path: '/users', component: Users},
+		  {path: '/user/edit/:email', component: UserEdit},
+		  {path: '/addUser', component: UserAdd}
 	  ]
 });
 
