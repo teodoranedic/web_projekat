@@ -11,7 +11,6 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -28,6 +27,7 @@ import model.Resource;
 import model.Role;
 import model.User;
 import model.VM;
+import model.VMData;
 import spark.Session;
 import utility.Check;
 import utility.Logging;
@@ -686,6 +686,62 @@ public class CloudServiceProvider {
 			res.status(400);
 			return "Error.";
 			
+		});
+		
+		post("rest/addVM",(req, res)->{
+			res.type("application/json");
+			VMData data = g.fromJson(req.body(), VMData.class);
+			VM newVM = new VM();
+			if(!Check.VMNameUnique(data.getName())) {
+				res.status(400);
+				return "VM name is not unique";
+			}
+			newVM.setName(data.getName());
+			for(CategoryVM cat: categories) {
+				if(cat.getName().equals(data.getCategory())) {
+					newVM.setCategory(cat);
+					break;
+				}
+			}
+			for(Disc d: discs) {
+				for(String dname: data.getCheckedDiscs()) {
+					if(d.getName().equals(dname)) {
+						newVM.getDiscs().add(d);
+						d.setVirtualMachine(newVM);
+						break;
+					}
+				}
+			}
+			if(!data.getOrg().equals("")) {
+				for(Organization o: organizations) {
+					if(o.getName().equals(data.getOrg())) {
+						o.getResources().add(newVM);
+						break;
+					}
+				}
+			}else {
+				Session ss = req.session(true);
+				User currentUser = ss.attribute("user");
+				currentUser.getOrganization().getResources().add(newVM);
+				
+			}
+			vms.add(newVM);
+			DiscIO.toFile(discs);
+			VMIO.toFile(vms);
+			OrganizationsIO.toFile(organizations);
+			res.status(200);
+			return "Successfully added new vm";
+		});
+		
+		
+		get("rest/getEmptyDiscs", (req, res) -> {
+			res.type("application/json");
+			ArrayList<Disc> emptyDiscs = new ArrayList<Disc>();
+			for(Disc d: discs) {
+				if(d.getVirtualMachine().getName().equals(""))
+					emptyDiscs.add(d);
+			}
+			return g.toJson(emptyDiscs);
 		});
 
 
