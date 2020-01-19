@@ -11,6 +11,8 @@ const CatAdd = {template: '<catAdd-page></catAdd-page>'}
 const Users = {template: '<users-page></users-page>'}
 const UserEdit = {template: '<userEdit-page></userEdit-page>'}
 const UserAdd = {template: '<userAdd-page></userAdd-page>'}
+const Discs = {template: '<disc-page></disc-page>'}
+const DiscEdit = {template: '<discEdit-page></discEdit-page>'}
 
 const router = new VueRouter({
 	  mode: 'hash',
@@ -26,7 +28,9 @@ const router = new VueRouter({
 		  {path: '/addCategory', component: CatAdd},
 		  {path: '/users', component: Users},
 		  {path: '/user/edit/:email', component: UserEdit},
-		  {path: '/addUser', component: UserAdd}
+		  {path: '/addUser', component: UserAdd},
+		  {path: '/discs', component: Discs},
+		  {path: '/disc/edit/:name', component: DiscEdit}
 	  ]
 });
 

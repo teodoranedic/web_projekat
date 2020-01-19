@@ -52,6 +52,8 @@ public class VMIO {
 		for (Disc d : discs) {
 			retVal += d.getName() + ";";
 		}
+		if(retVal.equals(""))
+			return retVal;
 		return retVal.substring(0, retVal.length() - 1);
 	}	
 

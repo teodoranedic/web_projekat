@@ -23,6 +23,7 @@ import io.VMIO;
 import model.CategoryVM;
 import model.Disc;
 import model.Organization;
+import model.Resource;
 import model.Role;
 import model.User;
 import model.VM;
@@ -120,8 +121,21 @@ public class CloudServiceProvider {
 		});
 		
 		get("/rest/getAllVM", (req, res) -> {
-			res.type("application/json");			
-			return g.toJson(vms);
+			res.type("application/json");
+			Session ss = req.session(true);
+			User user = ss.attribute("user");
+			if(user.getRole() == Role.SUPERADMIN)
+				return g.toJson(vms);
+			else {
+				ArrayList<VM> adminVMS = new ArrayList<VM>();
+				for(Resource v: user.getOrganization().getResources()) {
+					if(v instanceof VM) {
+						adminVMS.add((VM)v);
+					}
+				}
+				return g.toJson(adminVMS);
+			}
+			
 		});
 		
 		get("/rest/getAllOrg", (req, res) -> {
@@ -444,6 +458,61 @@ public class CloudServiceProvider {
 			}
 			res.status(400);
 			return "NIJE OK";
+		});
+		
+		get("/rest/getAllDiscs", (req, res) -> {
+			res.type("application/json");
+			Session ss = req.session(true);
+			User user = ss.attribute("user");
+			if(user.getRole() == Role.SUPERADMIN)
+				return g.toJson(discs);
+			else {
+				ArrayList<Disc> adminDiscs = new ArrayList<Disc>();
+				for(Resource r: user.getOrganization().getResources()) {
+					if(r instanceof Disc) {
+						adminDiscs.add((Disc)r);
+					}
+				}
+				return g.toJson(adminDiscs);
+			}
+		});
+		
+		get("/rest/getDisc/:name", (req, res) -> {
+			res.type("application/json");
+			String name = req.params("name");
+			for (Disc d : discs) {
+				if (d.getName().equals(name))
+					return g.toJson(d);
+			}
+			return "";
+		});
+		
+		put("rest/editDisc/:name", (req, res)->{
+			res.type("application/json");
+			Disc data =  g.fromJson(req.body(), Disc.class);
+			String name = req.params("name");
+			for(Disc d : discs) {
+				if(d.getName().equals(name))
+				{
+					d.setName(data.getName());
+					d.setCapacity(data.getCapacity());
+					d.setType(data.getType());
+					if(!d.getVirtualMachine().getName().equals(data.getVirtualMachine().getName())) {
+						d.getVirtualMachine().getDiscs().remove(d);
+						for(VM v: vms) {
+							if(v.getName().equals(data.getVirtualMachine().getName())) {
+								v.getDiscs().add(d);
+								d.setVirtualMachine(v);
+								break;
+							}
+						}	
+					}
+					DiscIO.toFile(discs);
+					VMIO.toFile(vms);
+					break;
+				}
+			}
+			return "";
 		});
 
 

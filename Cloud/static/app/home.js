@@ -24,7 +24,7 @@ Vue.component("home-page", {
 				<a href="#/vms" class="btn btn-primary btn-lg disabled" tabindex="-1" role="button" aria-disabled="true"> Virtual machines</a>
 			</p>
 			<p>
-				<a href="#/discs" class="btn btn-primary btn-lg disabled" tabindex="-1" role="button" aria-disabled="true"> Discs</a>
+				<a href="#/discs" class="btn btn-primary btn-lg" tabindex="-1" role="button" > Discs</a>
 			</p>
 			<p>
 				<a href="#/cat" v-if="role=='SUPERADMIN'" class="btn btn-primary btn-lg" tabindex="-1" role="button"> Categories</a>
