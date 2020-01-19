@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -28,6 +29,7 @@ import model.Role;
 import model.User;
 import model.VM;
 import spark.Session;
+import utility.Check;
 import utility.Logging;
 
 public class CloudServiceProvider {
@@ -452,9 +454,7 @@ public class CloudServiceProvider {
 							OrganizationsIO.toFile(organizations);
 							return "OK";
 						}
-					}
-				
-				
+					}			
 			}
 			res.status(400);
 			return "NIJE OK";
@@ -491,7 +491,13 @@ public class CloudServiceProvider {
 			res.type("application/json");
 			Disc data =  g.fromJson(req.body(), Disc.class);
 			String name = req.params("name");
+			if(!data.getName().equals(name) && !Check.DiscNameUnique(data.getName())) {
+				res.status(400);
+				return "New name is not unique";
+			}
 			for(Disc d : discs) {
+				// ako je menjano ime i nije jedinstveno
+
 				if(d.getName().equals(name))
 				{
 					d.setName(data.getName());
@@ -509,10 +515,177 @@ public class CloudServiceProvider {
 					}
 					DiscIO.toFile(discs);
 					VMIO.toFile(vms);
+					OrganizationsIO.toFile(organizations); // zbog imena diska 
 					break;
 				}
 			}
 			return "";
+		});
+		
+		delete("/rest/deleteDisc/:name", (req, res) ->{
+			res.type("application/json");
+			Disc data = g.fromJson(req.body(), Disc.class);
+			String name = req.params("name");
+			for(Disc d : discs)
+			{
+				if(d.getName().equals(name)) {
+					for(VM v: vms) {
+						if(v.getDiscs().contains(d)) {
+							v.getDiscs().remove(d);
+							break;
+						}
+					}
+					for(Organization o: organizations) {
+						if(o.getResources().contains(d))
+							o.getResources().remove(d);
+					}
+					discs.remove(d);
+					DiscIO.toFile(discs);
+					VMIO.toFile(vms);
+					OrganizationsIO.toFile(organizations);
+					res.status(200);
+					return "OK";
+				}
+			}
+			res.status(400);
+			return "Error.";
+		});
+		
+		post("rest/addDisc", (req, res) ->{
+			res.type("application/json");
+			Disc data = g.fromJson(req.body(), Disc.class);
+			System.out.println(data);
+			Session ss = req.session(true);
+			User currentUser = ss.attribute("user");
+			if(utility.Check.DiscNameUnique(data.getName()))
+			{
+				// dodajemo disk virt masini, zatim i organizaciji kojoj pripada ta vm
+				// proveriti da li treba na ovaj nacin ili neka druga logika
+				for(VM v: vms) {
+					if(v.getName().equals(data.getVirtualMachine().getName())) {
+						data.setVirtualMachine(v);
+						v.getDiscs().add(data);
+						for(Organization o: organizations) {
+							if(o.getResources().contains(v)) {
+								o.getResources().add(data);
+								break;
+							}
+						}
+						discs.add(data);
+						DiscIO.toFile(discs);
+						VMIO.toFile(vms);
+						OrganizationsIO.toFile(organizations);
+						res.status(200);
+						return "OK";
+					}
+				}			
+			}
+			res.status(400);
+			return "Name is not unique.";
+		});
+		
+		get("rest/getVM/:name", (req, res)->{
+			res.type("application/json");
+			String name = req.params("name");
+			for (VM v : vms) {
+				if (v.getName().equals(name))
+					return g.toJson(v);
+			}
+			return "";
+		});
+		
+		get("rest/getDiscs/:name", (req, res)->{
+			res.type("application/json");
+			String name = req.params("name");
+			for (VM v : vms) {
+				if (v.getName().equals(name))
+					return g.toJson(v.getDiscs());
+			}
+			return "";
+		});
+		
+		put("rest/editVM/:name", (req, res)->{
+			res.type("application/json");
+			String name = req.params("name");
+			VM data = g.fromJson(req.body(), VM.class);
+			if(!data.getName().equals(name) && !Check.VMNameUnique(data.getName())) {
+			res.status(400);
+			return "New name is not unique";
+		}
+			for(VM v : vms) {
+
+				if(v.getName().equals(name)) {
+					v.setName(data.getName());
+					for(CategoryVM cvm: categories) {
+						if(cvm.getName().equals(data.getCategory().getName())) {
+							v.setCategory(cvm);
+							break;
+						}
+					}
+					ArrayList<Disc> remove = new ArrayList<Disc>();
+					for(Disc d: v.getDiscs()) {
+						boolean r = true;
+						for(Disc d2: data.getDiscs()) {
+							if(d2.getName().equals(d.getName())) {
+								r = false; 
+								break;
+							}
+						}
+						if(r) {
+							remove.add(d);
+						}
+					}
+					for(Disc d: discs) {
+						for(Disc d2: remove) {
+							if(d.getName().equals(d2.getName())) {
+								d.setVirtualMachine(new VM());
+								break;
+							}						
+						}
+					}
+					
+					
+					if(v.getDiscs().size() != data.getDiscs().size()) {
+						v.setDiscs(data.getDiscs());
+					}
+										
+				}
+			}
+			
+			VMIO.toFile(vms);
+			DiscIO.toFile(discs);
+			OrganizationsIO.toFile(organizations);		
+			return "";
+		});
+		
+		delete("rest/deleteVM/:name", (req,res)->{
+			res.type("application/json");
+			VM data = g.fromJson(req.body(), VM.class);
+			String name = req.params("name");
+			for(VM v : vms)
+			{
+				if(v.getName().equals(name)) {
+					for(Disc d: discs) {
+						if(v.getDiscs().contains(d)) {
+							d.setVirtualMachine(new VM());;
+							break;
+						}
+					}
+					for(Organization o: organizations) {
+						if(o.getResources().contains(v))
+							o.getResources().remove(v);
+					}
+					vms.remove(v);
+					DiscIO.toFile(discs);
+					VMIO.toFile(vms);
+					OrganizationsIO.toFile(organizations);
+					res.status(200);
+					return "OK";
+				}
+			}
+			res.status(400);
+			return "Error.";
+			
 		});
 
 

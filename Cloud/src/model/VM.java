@@ -6,10 +6,10 @@ public class VM extends Resource{
 	 // jedinstveno ime
 	private CategoryVM category;
 	private transient ArrayList<Disc> discs = new ArrayList<Disc>();
-	private transient ArrayList<Activity> activities = new ArrayList<Activity>();	
+	private ArrayList<Activity> activities = new ArrayList<Activity>();	
 	
 	public VM() {
-		super();
+		super("");
 	}
 	
 	public VM(String name, CategoryVM category, ArrayList<Disc> discs) {

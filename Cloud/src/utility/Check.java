@@ -2,8 +2,10 @@ package utility;
 
 import main.CloudServiceProvider;
 import model.CategoryVM;
+import model.Disc;
 import model.Organization;
 import model.User;
+import model.VM;
 
 public class Check {
 	
@@ -32,6 +34,26 @@ public class Check {
 		for(CategoryVM o : CloudServiceProvider.categories)
 		{
 			if(o.getName().equals(name))
+				return false;
+		}
+		return unique;
+	}
+	
+	public static boolean DiscNameUnique(String name) {
+		boolean unique = true;
+		for(Disc d : CloudServiceProvider.discs)
+		{
+			if(d.getName().equals(name))
+				return false;
+		}
+		return unique;
+	}
+	
+	public static boolean VMNameUnique(String name) {
+		boolean unique = true;
+		for(VM v : CloudServiceProvider.vms)
+		{
+			if(v.getName().equals(name))
 				return false;
 		}
 		return unique;

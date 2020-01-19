@@ -13,6 +13,9 @@ const UserEdit = {template: '<userEdit-page></userEdit-page>'}
 const UserAdd = {template: '<userAdd-page></userAdd-page>'}
 const Discs = {template: '<disc-page></disc-page>'}
 const DiscEdit = {template: '<discEdit-page></discEdit-page>'}
+const DiscAdd = {template: '<discAdd-page></discAdd-page>'}
+const VMs = {template: '<vms-page></vms-page>'}
+const VMEdit = {template: '<vmEdit-page></vmEdit-page>'}
 
 const router = new VueRouter({
 	  mode: 'hash',
@@ -30,7 +33,10 @@ const router = new VueRouter({
 		  {path: '/user/edit/:email', component: UserEdit},
 		  {path: '/addUser', component: UserAdd},
 		  {path: '/discs', component: Discs},
-		  {path: '/disc/edit/:name', component: DiscEdit}
+		  {path: '/disc/edit/:name', component: DiscEdit},
+		  {path: '/addDisc', component: DiscAdd},
+		  {path: '/vms', component: VMs},
+		  {path: '/vms/edit/:name', component: VMEdit}
 	  ]
 });
 

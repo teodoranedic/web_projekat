@@ -1,13 +1,15 @@
 Vue.component("discEdit-page", {
 	data: function () {
 		    return {
+		      role: null,
 		      disc: {},
 		      vms: null,
 		      vm: {},
 		      greska: '',
 		      nameErr: '',
 		      typeErr: '',
-		      capacityErr: ''
+		      capacityErr: '', 
+		      
 		    }
 	},
 	template: ` 
@@ -19,17 +21,17 @@ Vue.component("discEdit-page", {
 					
 				<tr>
 					<td>Name</td>
-					<td><input type="text"  v-model="disc.name"/></td>
+					<td><input type="text"  v-model="disc.name" v-bind:disabled="role=='USER'"/></td>
 					<td style="color: red">{{nameErr}}</td>
 				</tr>
 				<tr>
 					<td>Capacity</td>
-					<td><input type="text" v-model = "disc.capacity"/></td>
+					<td><input type="number" v-model = "disc.capacity" v-bind:disabled="role=='USER'"/></td>
 					<td style="color: red">{{capacityErr}}</td>
 				</tr>
 				<tr>
 					<td>Type</td>
-					<td><select id="selectType" v-model="disc.type">
+					<td><select id="selectType" v-model="disc.type" v-bind:disabled="role=='USER'">
 						<option value="SSD">SSD</option>
 						<option value="HDD">HDD</option>
 						</select>
@@ -37,7 +39,7 @@ Vue.component("discEdit-page", {
 					<td></td>
 				<tr>
 					<td>Virtual machine</td>
-					<td><select id="selectVM" v-model="vm.name">
+					<td><select id="selectVM" v-model="vm.name" v-bind:disabled="role=='USER'">
 						<option v-for="v in vms" :value="v.name">{{v.name}}</option>
 						</select>
 					</td>
@@ -47,9 +49,9 @@ Vue.component("discEdit-page", {
 			</tbody>
 			</table>
 			
-			<a href="#/discs" class="btn btn-primary btn-lg" tabindex="-1" role="button" v-on:click="deleteDisc()"> Delete disc </a>
+			<button class="btn btn-primary btn-lg" tabindex="-1" v-on:click="deleteDisc()" v-if="role=='SUPERADMIN'"> Delete </button>
 			<a href="#/discs" class="btn btn-primary btn-lg" tabindex="-1" role="button" v-on:click="cancel()"> Cancel </a>
-			<button class="btn btn-primary btn-lg" tabindex="-1"  v-on:click="save()">Save</button> 
+			<button class="btn btn-primary btn-lg" tabindex="-1"  v-on:click="save()" v-bind:disabled="role=='USER'">Save</button> 
 
 		</div>		  
 		`
@@ -114,5 +116,8 @@ Vue.component("discEdit-page", {
 	         axios
 	         	.get('rest/getAllVM')
 	         	.then(res => (this.vms = res.data))
+	         axios
+	        	.get('rest/getRole')
+	        	.then(res => (this.role = res.data))
 	    },
 	});

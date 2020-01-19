@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
 import main.CloudServiceProvider;
-import model.CategoryVM;
 import model.Disc;
 import model.DiscType;
+import model.VM;
 
 public class DiscIO {
 	private static ArrayList<String[]> data;
@@ -33,7 +33,7 @@ public class DiscIO {
 			String name = row[0];		
 			DiscType type = DiscType.valueOf(row[1]);
 			int capacity = Integer.parseInt(row[2]);
-			Disc d = new Disc(name, type, capacity, null);
+			Disc d = new Disc(name, type, capacity, new VM());
 			CloudServiceProvider.discs.add(d);
 			
 		}

@@ -1,2 +1,3 @@
 "name","type","capacity","virtualMachine"
-"d1","HDD","10","vm2"
+"d1","HDD","500",""
+"d3","SSD","555",""

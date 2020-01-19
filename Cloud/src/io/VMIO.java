@@ -17,7 +17,7 @@ import model.VM;
 
 public class VMIO {
 	private static ArrayList<String[]> data;
-	public static SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy. HH.mm");
+	public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
 	
 	public static void setData(ArrayList<VM> list)
