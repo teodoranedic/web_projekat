@@ -9,9 +9,11 @@ import static spark.Spark.staticFiles;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -23,8 +25,10 @@ import io.UserIO;
 import io.VMIO;
 import model.Activity;
 import model.CategoryVM;
+import model.DateSearch;
 import model.Disc;
 import model.DiscSearch;
+import model.MonthlyCheck;
 import model.Organization;
 import model.Resource;
 import model.Role;
@@ -40,6 +44,7 @@ public class CloudServiceProvider {
 
 	private static Gson g = new Gson();
 
+	private static DecimalFormat df2 = new DecimalFormat("#.##");
 	public static ArrayList<User> users = new ArrayList<User>();
 	public static ArrayList<Organization> organizations = new ArrayList<Organization>();
 	public static ArrayList<VM> vms = new ArrayList<VM>();
@@ -964,6 +969,82 @@ public class CloudServiceProvider {
 			}
 			res.status(200);
 			return "OK";
+		});
+		
+		put("rest/monthlyCheck",(req, res) -> {
+			res.type("application/json");
+			DateSearch data = Check.getDate(req.body());
+			ArrayList<MonthlyCheck> retVal = new ArrayList<MonthlyCheck>();
+			User user = req.session().attribute("user");
+			
+			long diffInMillies = Math.abs(data.getEnd().getTime() - data.getStart().getTime());
+		    double days = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+		    
+		    
+		    for(Resource r : user.getOrganization().getResources())
+		    {
+		    	if(r instanceof Disc)
+		    	{
+		    		MonthlyCheck mc = new MonthlyCheck();
+					mc.setName(((Disc)r).getName());
+					mc.setPrice(days*Check.getDiscPrice((Disc)r));
+					mc.setPrice(Double.parseDouble(df2.format(mc.getPrice())));
+					retVal.add(mc);
+		    	}
+		    	else
+		    	{
+		    		MonthlyCheck mc = new MonthlyCheck();
+		    		mc.setPrice(0);
+					for(Activity a : ((VM)r).getActivities())
+					{
+						if(a.getTurnOn().after(data.getStart()))
+						{
+							if(a.getTurnOff().before(data.getEnd()))
+							{
+								diffInMillies = Math.abs(a.getTurnOff().getTime() - a.getTurnOn().getTime());
+							    days = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+								// upada u granica
+								mc.setName(((VM)r).getName());
+								mc.add(days*Check.getVMPrice((VM)r));
+								
+								
+							}
+							else
+							{
+								if(a.getTurnOn().before(data.getEnd()))
+								{
+									diffInMillies = Math.abs(data.getEnd().getTime() - a.getTurnOn().getTime());
+								    days = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+									mc.setName(((VM)r).getName());
+									mc.add(days*Check.getVMPrice((VM)r));
+								}
+							}
+						}
+						else 
+						{
+							if(a.getTurnOff().after(data.getStart()) & a.getTurnOff().before(data.getEnd()))
+							{
+								// turnOff after getStart and before getEnd
+								// od get start do turn off
+								diffInMillies = Math.abs(a.getTurnOff().getTime() - data.getStart().getTime());
+							    days = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+								mc.setName(((VM)r).getName());
+								mc.add(days*Check.getVMPrice((VM)r));
+							}
+							
+							
+						}
+					}
+					
+					mc.setPrice(Double.parseDouble(df2.format(mc.getPrice())));
+					if(mc.getPrice() != 0)
+						retVal.add(mc);
+					
+		    	}
+		    }
+		    
+			res.status(200);
+			return g.toJson(retVal);
 		});
 
 	}

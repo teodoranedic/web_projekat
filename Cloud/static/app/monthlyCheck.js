@@ -3,7 +3,8 @@ Vue.component("monthly-page", {
 		    return {
 		      resources: null,
 		      role: null,
-		      searchData: {}
+		      searchData: {},
+		      sum: 0
 		    }
 	},
 	template: ` 
@@ -11,8 +12,8 @@ Vue.component("monthly-page", {
 		</br>
 		<h2>Monthly check</h2>
 			<table>
-			<tr><td>Start date:</td><td><input type="date" id="start" v-model="searchData.startDate"></td></tr>
-			<tr><td>End date:</td><td><input type="date" id="end" v-model="searchData.endDate"></td>
+			<tr><td>Start date:</td><td><input type="date" id="start" v-model="searchData.start"></td></tr>
+			<tr><td>End date:</td><td><input type="date" id="end" v-model="searchData.end"></td></tr>
 			</table>
 			<button class="btn btn-primary btn-lg" tabindex="-1" v-on:click="getData(searchData)">Done</button>
 			<table class="table table-striped">
@@ -30,6 +31,8 @@ Vue.component("monthly-page", {
 			</tbody>
 			</table>
 			
+			<br>
+			<p>Total price: {{sum}}</p>
 			
 		</div>		  
 		`
@@ -40,10 +43,15 @@ Vue.component("monthly-page", {
 				.put('rest/monthlyCheck', this.searchData)
 				.then((res) => {
 					if(res.status == 200){
-						
+						this.sum = 0;
 						this.resources = res.data;
 						if(this.resources.length == 0){
 							alert("No result");
+						}
+						else{
+							for(let r of this.resources){
+								this.sum = this.sum + r.price;
+							}
 						}
 					}
 				})

@@ -23,6 +23,8 @@ public class MonthlyCheck {
 	public MonthlyCheck() {
 		super();
 	}
-	
+	public void add(double p) {
+		price = price + p;
+	}
 	
 }
