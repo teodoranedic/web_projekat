@@ -97,17 +97,21 @@ public class VMIO {
 	private static ArrayList<Activity> actFromString(String row) throws ParseException {
 		ArrayList<Activity> retVal = new ArrayList<Activity>();
 		String[] pairs = row.split("\\|");
-		
 		for (String s : pairs) {
 			String[] pair = s.split(";");
+			
 			if(pair[0].equals(""))
 				return retVal;
-			Activity a;
-			if(pair[1].equals(""))
-				a = new Activity(sdf.parse(pair[0]));
 			else
-				a = new Activity(sdf.parse(pair[0]), sdf.parse(pair[1]));
-			retVal.add(a);
+			{
+				Activity a;
+				if(pair.length > 1)
+					a = new Activity(sdf.parse(pair[0]), sdf.parse(pair[1]));
+				else
+					a = new Activity(sdf.parse(pair[0]));
+				
+				retVal.add(a);
+			}
 		}
 
 		return retVal;

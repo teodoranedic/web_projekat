@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -20,8 +21,10 @@ import io.DiscIO;
 import io.OrganizationsIO;
 import io.UserIO;
 import io.VMIO;
+import model.Activity;
 import model.CategoryVM;
 import model.Disc;
+import model.DiscSearch;
 import model.Organization;
 import model.Resource;
 import model.Role;
@@ -743,7 +746,99 @@ public class CloudServiceProvider {
 			}
 			return g.toJson(emptyDiscs);
 		});
-
+		
+		get("rest/getStatus/:name", (req, res) -> {
+			res.type("application/json");
+			String name = req.params("name");
+			for(VM v: vms) {
+				if(v.getName().equals(name)) {
+					if(v.getActivities().size() != 0) {
+						if(v.getActivities().get(v.getActivities().size() - 1).getTurnOff() != null) {
+							res.status(200);
+							return g.toJson(false);
+						}
+						else {
+							res.status(200);
+							return g.toJson(true);
+						}
+					}else {
+						res.status(200);
+						return g.toJson(false);
+					}
+				}
+			}
+			res.status(400);
+			return "Error";
+		});
+		
+		put("rest/changeStatus/:name", (req, res) -> {
+			res.type("application/json");
+			String name = req.params("name");
+			for(VM v: vms) {
+				if(v.getName().equals(name)) {
+					if(v.getActivities().size() != 0) {
+						if(v.getActivities().get(v.getActivities().size() - 1).getTurnOff() == null) {
+							v.getActivities().get(v.getActivities().size() - 1).setTurnOff(new Date());
+							res.status(200);
+							VMIO.toFile(vms);
+							return "Status  changed";
+						}
+						else {
+							v.getActivities().add(new Activity(new Date()));
+							res.status(200);
+							VMIO.toFile(vms);
+							return "Status  changed";
+						}
+					}else {
+						v.getActivities().add(new Activity(new Date()));
+						res.status(200);
+						VMIO.toFile(vms);
+						return "Status  changed";
+					}
+					
+				}
+			}
+			
+			res.status(400);
+			return "VM not found";
+		});
+		
+		put("rest/searchDiscs", (req, res)->{
+			res.type("application/json");
+			DiscSearch data = g.fromJson(req.body(), DiscSearch.class);
+			ArrayList<Disc> result = new ArrayList<Disc>();
+			
+			
+			for(Disc d: discs)
+			{
+				if(!data.getName().equals("")) {
+					if(d.getName().contains(data.getName())) {
+						if(data.getTo() != 0) {
+							if(d.getCapacity() > data.getFrom() & d.getCapacity() < data.getTo()) {
+								result.add(d);
+							}
+						} else {
+							if(d.getCapacity() > data.getFrom())
+								result.add(d);
+						}
+					}
+				}else {
+					if(data.getTo() != 0) {
+						if(d.getCapacity() > data.getFrom() & d.getCapacity() < data.getTo()) {
+							result.add(d);
+						}
+					} else {
+						if(d.getCapacity() > data.getFrom())
+							result.add(d);
+					}		
+				}
+			}
+			
+			res.status(200);
+			return g.toJson(result);
+			
+		
+		});
 
 	}
 

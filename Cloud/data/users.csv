@@ -1,4 +1,4 @@
-"email","name","lastName","password","organization","role"
-"super@admin.com","Super","Admin","superadmin","org6","SUPERADMIN"
-"user1@mail.com","Marko","Markovic","user1","org6","USER"
-"admin@admin.com","Pera","Petrovic","admin","org2","ADMIN"
+email,name,lastName,password,organization,role
+super@admin.com,Super,Admin,superadmin,org6,SUPERADMIN
+user1@mail.com,Marko,Markovic,user1,org6,USER
+admin@admin.com,Pera,Petrovic,admin,org6,ADMIN

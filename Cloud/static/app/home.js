@@ -18,7 +18,7 @@ Vue.component("home-page", {
 				<a href="#/org" v-if="role!='USER'" class="btn btn-primary btn-lg" tabindex="-1" role="button"> Organizations</a>
 			</p>
 			<p>
-				<a href="#/users"   class="btn btn-primary btn-lg" tabindex="-1" role="button"> Users</a>
+				<a href="#/users"   v-if="role != 'USER'" class="btn btn-primary btn-lg" tabindex="-1" role="button"> Users</a>
 			</p>
 			<p>
 				<a href="#/vms" class="btn btn-primary btn-lg" tabindex="-1" role="button"> Virtual machines</a>

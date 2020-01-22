@@ -3,7 +3,9 @@ Vue.component("disc-page", {
 		    return {
 		      discs: null,
 		      role: null,
-		      searchData: {}
+		      searchData: {name: "",
+		    	  			from: 0,
+		    	  			to: 0}
 		    }
 	},
 	template: ` 
@@ -34,7 +36,7 @@ Vue.component("disc-page", {
 			<td>Capacity from:</td><td><input type="number" id="capacityFrom" v-model="searchData.from"></td>
 			<td>to:</td><td><input type="number" id="capacityTo" v-model="searchData.to"></td></tr>
 			</table>
-			<a href="" class="btn btn-primary btn-lg" tabindex="-1" role="button" v-on:click="search(searchData)">Search</a>
+			<button class="btn btn-primary btn-lg" tabindex="-1" v-on:click="search(searchData)">Search</button>
 		
 
 		</div>		  
@@ -43,6 +45,23 @@ Vue.component("disc-page", {
 		methods : {
 			selectDisc : function(d){
 				this.$router.push('/disc/edit/'+d.name)
+			},
+			
+			search: function(searchData){
+				axios
+				.put('rest/searchDiscs', this.searchData)
+				.then((res) => {
+					if(res.status == 200){
+						
+						this.discs = res.data;
+						if(this.discs.length == 0){
+							alert("No result")
+						}
+					}
+				})
+				.catch((res)=>{
+					alert("No results")
+				})
 			}
 	
 		},

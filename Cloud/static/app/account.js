@@ -2,7 +2,7 @@ Vue.component("account", {
 	data: function () {
 		    return {
 		      id: null,
-		      account: null,
+		      account: {},
 		      role: null,
 		      repeat: '',
 		      emailErr: '',

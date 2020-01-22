@@ -6,7 +6,7 @@ Vue.component("vmEdit-page", {
 		      activities: null,
 		      discs: null,
 		      category: {},
-		      
+		      status: null,
 		      
 		      categories: null,
 		      greska: '',
@@ -52,6 +52,8 @@ Vue.component("vmEdit-page", {
 			<button class="btn btn-primary btn-lg" tabindex="-1" v-on:click="deleteVM()" v-if="role=='SUPERADMIN'"> Delete </button>
 			<a href="#/vms" class="btn btn-primary btn-lg" tabindex="-1" role="button" v-on:click="cancel()"> Cancel </a>
 			<button class="btn btn-primary btn-lg" tabindex="-1"  v-on:click="save()" v-bind:disabled="role=='USER'">Save</button> 
+			<button class="btn btn-primary btn-lg" tabindex="-1"  v-on:click="onOff()" v-if="role=='ADMIN' && status==true" >Turn off</button>
+			<button class="btn btn-primary btn-lg" tabindex="-1"  v-on:click="onOff()" v-if="role=='ADMIN' && status==false" >Turn on</button>
 
 		</div>		  
 		`
@@ -98,6 +100,21 @@ Vue.component("vmEdit-page", {
 			},
 			removeDisc : function(i){
 				this.discs.splice(i, 1);
+			},
+			
+			onOff: function(){
+				axios
+				.put('rest/changeStatus/'+this.$route.params.name)
+				.then((res) => {
+					if(res.status == 200){
+						alert("Successfully changed status");
+						this.status = !this.status;
+						//this.router.push('/vms/edit/'+this.$route.params.name);
+					}
+				})
+				.catch((res)=>{
+					this.greska = 'Error'
+				})	
 			}
 			
 		},
@@ -130,6 +147,10 @@ Vue.component("vmEdit-page", {
 	         axios
 	        	.get('rest/getRole')
 	        	.then(res => (this.role = res.data))
+	        	
+	        axios
+	        	.get('rest/getStatus/'+this.$route.params.name)
+	        	.then(res => (this.status = res.data))
 	    },
 	    filters: {
 	    	inputDateFilter: function (date) {
