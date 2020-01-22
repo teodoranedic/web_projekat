@@ -54,6 +54,16 @@ Vue.component("users-page", {
 					this.$router.push('/')
 				})
 			
+			axios
+			.get('rest/testSuperadminAdmin')
+			.then((res) => {
+				if(res.status == 200){
+					
+				}				
+			})
+			.catch((res)=>{
+				this.$router.push('/')
+			})
 	        axios
 	          .get('rest/getAllUser')
 	          .then(res => (this.users = res.data))

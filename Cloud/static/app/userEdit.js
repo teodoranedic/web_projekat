@@ -121,6 +121,8 @@ Vue.component("userEdit-page", {
 	          .then(res => {
 	        	  this.user = res.data;
 	        	  this.organization = res.data.organization;
-	          })
+	          }).catch((res)=>{
+					this.$router.push('/')
+				})
 	    },
 	});

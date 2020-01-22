@@ -30,7 +30,7 @@ Vue.component("home-page", {
 				<a href="#/cat" v-if="role=='SUPERADMIN'" class="btn btn-primary btn-lg" tabindex="-1" role="button"> Categories</a>
 			</p>
 			<p>
-				<a href="#/cat" v-if="role=='ADMIN'" class="btn btn-primary btn-lg disabled" tabindex="-1" role="button" aria-disabled="true"> Monthly check</a>
+				<a href="#/monthlyCheck" v-if="role=='ADMIN'" class="btn btn-primary btn-lg disabled" tabindex="-1" role="button" aria-disabled="true"> Monthly check</a>
 			</p>
 			</div>
 		</br>

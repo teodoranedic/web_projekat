@@ -112,7 +112,10 @@ Vue.component("discEdit-page", {
 	          .get('rest/getDisc/' + this.$route.params.name)
 	          .then(res => {this.disc = res.data;
 	          				this.vm = res.data.virtualMachine;
-	          })
+	          }).catch((res)=>{
+					this.$router.push('/');
+				})
+			
 	         axios
 	         	.get('rest/getAllVM')
 	         	.then(res => (this.vms = res.data))

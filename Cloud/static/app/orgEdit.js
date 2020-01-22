@@ -94,10 +94,14 @@ Vue.component("orgEdit-page", {
 				})
 				.catch((res)=>{
 					this.$router.push('/')
-				})
+				})			
 			
 	        axios
 	          .get('rest/getOrg/' + this.$route.params.name)
 	          .then(res => (this.org = res.data))
+	          .catch((res)=>{
+				this.$router.push('/')
+			})
+	        
 	    },
 	});

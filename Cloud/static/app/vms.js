@@ -4,7 +4,9 @@ Vue.component("vms-page", {
 		      vms: null,
 		      organization: {}, // ne treba trenutno dok ne smislimo kako
 		      role: null,
-		      searchData: {}
+		      searchData: {name:'', coreNumberFrom: 0, coreNumberTo:0,
+		    	  			RAMFrom: 0, RAMTo: 0,
+		    	  			GPUFrom: 0, GPUTo: 0}
 		    }
 	},
 	template: ` 
@@ -46,7 +48,7 @@ Vue.component("vms-page", {
 			<tr><td>GPU from:</td><td><input type="number" id="GPUFrom" v-model="searchData.GPUFrom"></td>
 			<td>to:</td><td><input type="number" id="GPUTo" v-model="searchData.GPUTo"></td></tr>
 			</table>
-			<a href="" class="btn btn-primary btn-lg" tabindex="-1" role="button" v-on:click="search(searchData)">Search</a>
+			<button class="btn btn-primary btn-lg" tabindex="-1" v-on:click="search(searchData)">Search</button>
 		
 
 		</div>		  
@@ -55,6 +57,22 @@ Vue.component("vms-page", {
 		methods : {
 			selectVM : function(v){
 				this.$router.push('/vms/edit/'+v.name)
+			},
+			search: function(searchData){
+				axios
+				.put('rest/searchVMs', this.searchData)
+				.then((res) => {
+					if(res.status == 200){
+						
+						this.vms = res.data;
+						if(this.vms.length == 0){
+							alert("No result")
+						}
+					}
+				})
+				.catch((res)=>{
+					alert("No results")
+				})
 			}
 	
 		},

@@ -66,5 +66,15 @@ Vue.component("log-in", {
 		}
 	},
 	mounted () {
+		axios
+		.get('rest/testlogin')
+		.then((res) => {
+			if(res.status == 200){
+				this.$router.push('/page');
+			}				
+		})
+		.catch((res)=>{
+			this.$router.push('/')
+		})
     }
 });

@@ -134,7 +134,9 @@ Vue.component("vmEdit-page", {
 	          .then(res => {this.vm = res.data;
 	          				this.activities = res.data.activities;
 	          				this.category = res.data.category;
-	          })
+	          }).catch((res)=>{
+					this.$router.push('/');
+				})
 	          
 	         axios
 	         	.get('rest/getDiscs/'+this.$route.params.name)

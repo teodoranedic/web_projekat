@@ -46,6 +46,16 @@ Vue.component("categories", {
 				.catch((res)=>{
 					this.$router.push('/')
 				})
+			axios
+			.get('rest/testSuperadmin')
+			.then((res) => {
+				if(res.status == 200){
+					
+				}				
+			})
+			.catch((res)=>{
+				this.$router.push('/')
+			})
 			
 	        axios
 	          .get('rest/getAllCat')

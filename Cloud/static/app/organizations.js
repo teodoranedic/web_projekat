@@ -35,30 +35,44 @@ Vue.component("organization-page", {
 		methods : {
 			selectOrg : function(org){
 				this.$router.push('/org/edit/'+org.name)
-			}
+			},
 	//,
 	//		imgUrl : function(path){
 	//			return images('././data/' + path)
 	//		}
+			
+	
 		},
 		mounted () {
 			axios
 				.get('rest/testlogin')
 				.then((res) => {
 					if(res.status == 200){
-						//this.$router.push('/');
+						
 					}				
 				})
 				.catch((res)=>{
 					this.$router.push('/')
 				})
 			
-	        axios
+			axios
+			.get('rest/testSuperadminAdmin')
+			.then((res) => {
+				if(res.status == 200){
+					
+				}				
+			})
+			.catch((res)=>{
+				this.$router.push('/')
+			})
+			
+			axios
 	          .get('rest/getAllOrg')
 	          .then(res => (this.orgs = res.data))
 	          
 	        axios
 	        	.get('rest/getRole')
 	        	.then(res => (this.role = res.data))
+	        
 	    },
 	});

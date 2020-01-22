@@ -17,6 +17,7 @@ const DiscAdd = {template: '<discAdd-page></discAdd-page>'}
 const VMs = {template: '<vms-page></vms-page>'}
 const VMEdit = {template: '<vmEdit-page></vmEdit-page>'}
 const VMAdd = {template: '<vmAdd-page></vmAdd-page>'}
+const MonthlyCheck = {template: '<monthly-page></monthly-page>'}
 
 const router = new VueRouter({
 	  mode: 'hash',
@@ -38,7 +39,8 @@ const router = new VueRouter({
 		  {path: '/addDisc', component: DiscAdd},
 		  {path: '/vms', component: VMs},
 		  {path: '/vms/edit/:name', component: VMEdit},
-		  {path: '/addVMs', component: VMAdd}
+		  {path: '/addVMs', component: VMAdd},
+		  {path: '/monthlyCheck', component: MonthlyCheck}
 	  ]
 });
 

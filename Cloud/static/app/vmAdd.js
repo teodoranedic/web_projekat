@@ -103,6 +103,27 @@ Vue.component("vmAdd-page", {
 		
 		},
 		mounted () {
+			axios
+				.get('rest/testlogin')
+				.then((res) => {
+					if(res.status == 200){
+						//this.$router.push('/');
+					}				
+				})
+				.catch((res)=>{
+					this.$router.push('/')
+				})
+			
+			axios
+			.get('rest/testSuperadminAdmin')
+			.then((res) => {
+				if(res.status == 200){
+					
+				}				
+			})
+			.catch((res)=>{
+				this.$router.push('/')
+			})
 			
 			axios
          		.get('rest/getEmptyDiscs')
@@ -120,15 +141,6 @@ Vue.component("vmAdd-page", {
          		.get('rest/getAllOrg')
          		.then(res=> (this.organizations = res.data))
         	
-			axios
-				.get('rest/testlogin')
-				.then((res) => {
-					if(res.status == 200){
-						//this.$router.push('/');
-					}				
-				})
-				.catch((res)=>{
-					this.$router.push('/')
-				})
+			
 		}
 	});
