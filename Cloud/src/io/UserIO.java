@@ -9,6 +9,7 @@ import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
 import main.CloudServiceProvider;
 import model.CategoryVM;
+import model.Organization;
 import model.Role;
 import model.User;
 
@@ -22,7 +23,13 @@ public class UserIO {
 		data.add(new String[]{"email","name","lastName","password","organization","role"});
 		for (User obj: list)
 		{
-			data.add(new String[]{obj.getEmail(), obj.getName(), obj.getLastName(), obj.getPassword(), obj.getOrganization().getName(), ""+obj.getRole()});
+			if(obj.getOrganization().getName().equals("none")) {
+				data.add(new String[]{obj.getEmail(), obj.getName(), obj.getLastName(), obj.getPassword(), "", ""+obj.getRole()});
+			}
+			else {
+				data.add(new String[]{obj.getEmail(), obj.getName(), obj.getLastName(), obj.getPassword(), obj.getOrganization().getName(), ""+obj.getRole()});
+			}
+			
 		}
 	}
 	public static void fromFile() throws NumberFormatException, IOException {
@@ -37,7 +44,7 @@ public class UserIO {
 			String password = row[3];
 			Role role = Role.valueOf(row[5]);
 
-			User u = new User(email, name,lastname, password, null, role);
+			User u = new User(email, name, lastname, password, new Organization("none"), role);
 			CloudServiceProvider.users.add(u);
 			
 		}

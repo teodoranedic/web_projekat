@@ -21,7 +21,7 @@ Vue.component("organization-page", {
 				<tr v-for="o in orgs" v-on:click="selectOrg(o)">
 					<td>{{o.name}}</td>
 					<td>{{o.description}}</td>
-					<td><!-- img v-attr="src: '././data/'+o.imagePath" --></td>
+					<td><img v-bind:src="o.imagePath" height = 25 width=50></td>
 					
 				</tr>
 			</tbody>

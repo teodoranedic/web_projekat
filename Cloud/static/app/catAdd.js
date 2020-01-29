@@ -54,6 +54,12 @@ Vue.component("catAdd-page", {
 			},
 			
 			save : function (cat) {
+				this.greska ='';
+			    this.nameErr = '';
+			    this.coreNoErr = '';
+			    this.RAMErr = '';
+			    this.GPUErr = '';
+				
 				if(this.cat.name=='')
 					this.nameErr = 'Name cannot be blank.';
 				if(!this.cat.coreNumber)
@@ -72,7 +78,7 @@ Vue.component("catAdd-page", {
 						}
 					})
 					.catch((res)=>{
-						this.greska = 'Error'
+						toast("Error");
 					})
 					
 					

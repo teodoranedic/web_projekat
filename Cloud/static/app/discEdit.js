@@ -73,10 +73,14 @@ Vue.component("discEdit-page", {
 			},
 			
 			save : function(){
+				this.greska = '';
+				this.nameErr = '';
+				this.capacityErr='';
+				
 				if(this.disc.name=='')
 					this.nameErr = 'Name cannot be blank.';
 				if(!this.disc.capacity)
-					this.capacity = 'Capacity cannot be blank';
+					this.capacityErr = 'Capacity cannot be blank';
 				if(this.disc.name && this.disc.capacity){
 					axios
 					.put('rest/editDisc/'+this.$route.params.name, {"name": this.disc.name, "type": this.disc.type, "capacity": this.disc.capacity, "virtualMachine": this.vm })
@@ -87,7 +91,7 @@ Vue.component("discEdit-page", {
 						}
 					})
 					.catch((res)=>{
-						this.greska = 'Error'
+						toast('Error');
 					})
 					
 					

@@ -24,6 +24,10 @@ public class Organization {
 		super();
 	}
 
+	public Organization(String string) {
+		this.name = string;
+	}
+
 	public String getName() {
 		return name;
 	}

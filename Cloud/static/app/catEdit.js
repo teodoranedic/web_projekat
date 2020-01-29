@@ -66,6 +66,12 @@ Vue.component("catEdit-page", {
 			},
 			
 			save : function(){
+				this.greska ='';
+			    this.nameErr = '';
+			    this.coreNoErr = '';
+			    this.RAMErr = '';
+			    this.GPUErr = '';
+				
 				if(this.cat.name=='')
 					this.nameErr = 'Name cannot be blank.';
 				if(!this.cat.coreNumber)
@@ -84,7 +90,7 @@ Vue.component("catEdit-page", {
 						}
 					})
 					.catch((res)=>{
-						this.greska = 'Error'
+						toast('Error');
 					})
 					
 					

@@ -98,7 +98,7 @@ Vue.component("discAdd-page", {
 				})
 				.catch((res)=>{
 					this.greska = 'Error';
-					alert('Error');
+					toast('Error');
 				})
 		
 			},

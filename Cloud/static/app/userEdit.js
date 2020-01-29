@@ -43,8 +43,8 @@ Vue.component("userEdit-page", {
 					<td>Role</td>
 					<td>
 						<select id="selectRole" v-model="user.role">
-							<option value="SUPERADMIN">SUPERADMIN</option>
-							<option value="ADMIN">ADMIN</option>
+							<option v-if="user.role=='SUPERADMIN'" value="SUPERADMIN">SUPERADMIN</option>
+							<option v-if="user.role!='USER'" value="ADMIN">ADMIN</option>
 							<option value="USER">USER</option>
 						</select>
 					</td>
@@ -71,6 +71,8 @@ Vue.component("userEdit-page", {
 					        this.greska = '';
 							this.$router.push('/users');
 						}
+					}).catch((res)=>{
+						toast('Error');
 					})
 			},
 	
@@ -79,6 +81,10 @@ Vue.component("userEdit-page", {
 			},
 			
 			save : function(){
+				this.nameErr = '';
+				this.lastnameErr = '';
+				this.passwordErr = '';
+				
 				if(this.user.name=='')
 					this.nameErr = 'Name cannot be blank.';
 				if(this.user.lastName=='')
@@ -96,7 +102,7 @@ Vue.component("userEdit-page", {
 						}
 					})
 					.catch((res)=>{
-						this.greska = 'Error'
+						toast('Error');
 					})
 					
 				}

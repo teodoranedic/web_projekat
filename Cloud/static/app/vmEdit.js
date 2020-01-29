@@ -64,6 +64,7 @@ Vue.component("vmEdit-page", {
 	                return null;
 	            }
 	            return new Date(value);
+	            //return moment.utc(value, "x").format('MM/DD/YYYY');
 	        },
 			deleteVM : function() {
 				axios
@@ -81,10 +82,17 @@ Vue.component("vmEdit-page", {
 			},
 			
 			save : function(){
+				this.nameErr = '';
+				
 				if(this.vm.name=='')
 					this.nameErr = 'Name cannot be blank.';
 
 				if(this.vm.name){
+					for(let a of this.activities){
+						a.turnOn = moment(a.turnOn).format('lll');
+						a.turnOff = moment(a.turnOff).format('lll');
+					}
+					
 					axios
 					.put('rest/editVM/'+this.$route.params.name, {"name": this.vm.name, "category": this.category, "discs": this.discs, "activities": this.activities })
 					.then((res) => {

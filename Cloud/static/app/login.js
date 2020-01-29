@@ -51,6 +51,11 @@ Vue.component("log-in", {
 	, 
 	methods : {
 		logIn : function (loginData) {
+			this.greska = '';
+			if(!loginData.email || !loginData.password){
+				this.greska = 'Wrong email or password.';
+				return;
+			}
 			axios
 			.post('rest/login', {"email":''+loginData.email, "password": loginData.password})
 			.then((res) => {

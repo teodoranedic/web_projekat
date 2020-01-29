@@ -33,7 +33,6 @@ Vue.component("orgEdit-page", {
 			</tbody>
 			</table>
 			
-			<a href="#/org" class="btn btn-primary btn-lg" tabindex="-1" role="button" v-on:click="deleteOrg()"> Delete org </a>
 			<a href="#/org" class="btn btn-primary btn-lg" tabindex="-1" role="button" v-on:click="cancel()"> Cancel </a>
 			<button class="btn btn-primary btn-lg" tabindex="-1"  v-on:click="save()">Save</button> 
 
@@ -41,29 +40,23 @@ Vue.component("orgEdit-page", {
 		`
 		, 
 		methods : {
-			deleteOrg : function() {
-				axios
-					.delete('rest/deleteOrg/' + this.$route.params.name, {data: this.org})
-					.then((res) => {
-						if(res.status == 200){
-					        this.greska = '';
-							this.$router.push('/org');
-						}
-					})
-			},
-	
 			cancel : function(){
 				this.$router.push('/org')
 			},
 			
 			save : function(){
+				this.nameErr = '';
+				this.descErr = '';
+				this.imageErr = '';
+				this.greska = '';
+				
 				if(this.org.name=='')
 					this.nameErr = 'Name cannot be blank.';
 				if(!this.org.description)
 					this.descErr = 'Description cannot be blank.';
-				if(!this.org.imagePath)
+				if(this.org.imagePath == null)
 					this.imageErr = 'Choose a file for logo.';
-				if(this.org.name && this.org.description && this.org.imagePath){
+				if(this.org.name && this.org.description && this.org.imagePath != null){
 					axios
 					.put('rest/editOrg/'+this.$route.params.name, this.org)
 					.then((res) => {
@@ -73,7 +66,7 @@ Vue.component("orgEdit-page", {
 						}
 					})
 					.catch((res)=>{
-						this.greska = 'Error'
+						toast('Error');
 					})
 					
 					

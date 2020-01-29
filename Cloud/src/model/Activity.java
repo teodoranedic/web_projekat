@@ -19,7 +19,12 @@ public class Activity {
 		this.turnOn = turnOn;
 		this.turnOff = null;
 	}
-
+	
+//	public Activity(String turnOn, String turnOff) {
+//		super();
+//		this.turnOn = turnOn;
+//		this.turnOff = turnOff;
+//	}
 
 	public Activity(Date turnOn, Date turnOff) {
 		super();

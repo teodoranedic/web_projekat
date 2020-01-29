@@ -52,7 +52,6 @@ Vue.component("userAdd-page", {
 					<td>Role</td>
 					<td>
 						<select id="selectRole" v-model="user.role">
-							<option value="SUPERADMIN">SUPERADMIN</option>
 							<option value="ADMIN">ADMIN</option>
 							<option value="USER">USER</option>
 						</select>
@@ -79,6 +78,11 @@ Vue.component("userAdd-page", {
 			save : function(){
 				this.user.organization = this.organization;
 				
+				this.emailErr = '';
+				this.nameErr = '';
+				this.lastnameErr = '';
+				this.passwordErr = '';
+				
 				if(this.user.email == '')
 					this.emailErr = 'Email cannot be blank.';
  				if(this.user.name=='')
@@ -98,7 +102,7 @@ Vue.component("userAdd-page", {
 						}
 					})
 					.catch((res)=>{
-						this.greska = 'Error'
+						toast('Error');
 					})
 					
 				}

@@ -79,6 +79,9 @@ Vue.component("vmAdd-page", {
 			},
 			
 			save : function (vmData) {
+				this.nameErr = '';
+				this.categoryErr = '';
+				
 				if(!this.vmData.name)
 					this.nameErr = 'Name cannot be blank.';
 				if(!this.category.name)
@@ -95,8 +98,7 @@ Vue.component("vmAdd-page", {
 
 				})
 				.catch((res)=>{
-					// ne radi kako treba
-					this.greska = 'Error'
+					toast('Error');
 				})
 			}
 			},

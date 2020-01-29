@@ -49,25 +49,30 @@ Vue.component("orgAdd-page", {
 			},
 			
 			save : function (orgData) {
+				this.nameErr = '';
+				this.descErr = '';
+				this.imageErr = '';
+				this.greska = '';
+				
+				
 				if(!this.orgData.name)
 					this.nameErr = 'Name cannot be blank.';
 				if(!this.orgData.description)
 					this.descErr = 'Description cannot be blank.';
-				if(this.orgData.imagePath = null)
+				if(this.orgData.imagePath == null)
 					this.imageErr = 'Choose a file for logo.';
-				if(this.orgData.name && this.orgData.description && this.orgData.imagePath){
-				axios
-				.post('rest/addOrg', {"name": orgData.name, "description": orgData.description, "imagePath": orgData.imagePath})
-				.then((res) => {
-					if(res.status == 200){
-				        this.greska = '';
-						this.$router.push('/org');
-					}
+				if(this.orgData.name && this.orgData.description && this.orgData.imagePath != null){
+					axios
+					.post('rest/addOrg', {"name": orgData.name, "description": orgData.description, "imagePath": orgData.imagePath})
+					.then((res) => {
+						if(res.status == 200){
+					        this.greska = '';
+							this.$router.push('/org');
+						}
 
 				})
 				.catch((res)=>{
-					// ne radi kako treba
-					this.greska = 'Error'
+					toast("Error");
 				})
 			}
 			},

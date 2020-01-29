@@ -45,6 +45,7 @@ public class CloudServiceProvider {
 	private static Gson g = new Gson();
 
 	private static DecimalFormat df2 = new DecimalFormat("#.##");
+	
 	public static ArrayList<User> users = new ArrayList<User>();
 	public static ArrayList<Organization> organizations = new ArrayList<Organization>();
 	public static ArrayList<VM> vms = new ArrayList<VM>();
@@ -56,6 +57,8 @@ public class CloudServiceProvider {
 		staticFiles.externalLocation(new File("./static").getCanonicalPath());
 
 		// Ucitavanje podataka iz fajlova
+		// User superadmin = new User("super@admin.com", "Super", "Admin", "superadmin", null, Role.SUPERADMIN);
+		// users.add(superadmin);
 
 		CategoriesIO.fromFile();
 		DiscIO.fromFile();
@@ -176,23 +179,9 @@ public class CloudServiceProvider {
 				if (o.getName().equals(name))
 					return g.toJson(o);
 			}
-			return "";
-		});
-
-		// treba proveriti
-		delete("/rest/deleteOrg/:name", (req, res) -> {
-			res.type("application/json");
-			Organization data = g.fromJson(req.body(), Organization.class);
-			String name = req.params("name");
-			for (Organization o : organizations) {
-				if (o.getName().equals(name)) {
-					organizations.remove(o);
-					break;
-				}
-			}
-			OrganizationsIO.toFile(organizations);
 			return "OK";
 		});
+
 
 		post("/rest/addOrg", (req, res) -> {
 			res.type("application/json");
@@ -206,7 +195,7 @@ public class CloudServiceProvider {
 				return "OK";
 			}
 			res.status(400);
-			return "OK";
+			return "Error";
 
 		});
 
@@ -250,8 +239,8 @@ public class CloudServiceProvider {
 
 		delete("rest/deleteAcc/:id", (req, res) -> {
 			res.type("application/json");
-			User data = g.fromJson(req.body(), User.class);
 			String email = req.params("id");
+			
 			for (User u : users) {
 				if (u.getEmail().equals(email)) {
 					users.remove(u);
@@ -405,7 +394,7 @@ public class CloudServiceProvider {
 			}			
 			for (User user : users) {
 				if (user.getEmail().equals(email))
-					return g.toJson(u);
+					return g.toJson(user);
 			}
 			return "";
 		});
@@ -429,8 +418,16 @@ public class CloudServiceProvider {
 
 		delete("rest/deleteUser/:email", (req, res) -> {
 			res.type("application/json");
-			User data = g.fromJson(req.body(), User.class);
 			String email = req.params("email");
+			
+			Session ss = req.session(true);
+			User user = ss.attribute("user");
+			
+			if(user.getEmail().equals(email)) {
+				res.status(400);
+				return "You cannot delete yourself";
+			}
+			
 			for (User u : users) {
 				if (u.getEmail().equals(email)) {
 					users.remove(u);
@@ -493,10 +490,7 @@ public class CloudServiceProvider {
 			res.type("application/json");
 			String name = req.params("name");
 			User u = req.session().attribute("user");
-			if(u.getRole()==Role.USER) {
-				res.status(403);
-				return "Forbidden";
-			}else if(u.getRole()==Role.ADMIN) {
+			if(u.getRole()==Role.ADMIN || u.getRole()==Role.USER) {
 				for(Disc disc: discs) {
 					if(disc.getName().equals(name)) {
 						if(!u.getOrganization().getResources().contains(disc)) {
@@ -611,10 +605,7 @@ public class CloudServiceProvider {
 			res.type("application/json");
 			String name = req.params("name");
 			User u = req.session().attribute("user");
-			if(u.getRole()==Role.USER) {
-				res.status(403);
-				return "Forbidden";
-			}else if(u.getRole()==Role.ADMIN) {
+			if(u.getRole()==Role.ADMIN || u.getRole()==Role.USER) {
 				for(VM vm: vms) {
 					if(vm.getName().equals(name)) {
 						if(!u.getOrganization().getResources().contains(vm)) {
