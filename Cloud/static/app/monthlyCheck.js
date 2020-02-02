@@ -16,6 +16,7 @@ Vue.component("monthly-page", {
 			<tr><td>End date:</td><td><input type="date" id="end" v-model="searchData.end"></td></tr>
 			</table>
 			<button class="btn btn-primary btn-lg" tabindex="-1" v-on:click="getData(searchData)">Done</button>
+			<a href="#/page" class="btn btn-primary btn-lg" tabindex="-1" role="button">Home</a>
 			<table class="table table-striped">
 			<thead>
 				<tr>

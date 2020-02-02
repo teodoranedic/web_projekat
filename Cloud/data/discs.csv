@@ -1,3 +1,5 @@
 "name","type","capacity","virtualMachine"
-"d1","HDD","500",""
-"d3","SSD","555","vm33"
+"Disc1","SSD","256","VM12"
+"Disc2","HDD","500","VM1"
+"Disc3","HDD","500","VM2"
+"Disc4","SSD","256","VM1"

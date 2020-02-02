@@ -32,6 +32,7 @@ Vue.component("users-page", {
 			</table>
 			
 			<a href="#/addUser" class="btn btn-primary btn-lg" tabindex="-1" role="button"> Add New </a>
+			<a href="#/page" class="btn btn-primary btn-lg" tabindex="-1" role="button">Home</a>
 
 		</div>		  
 		`

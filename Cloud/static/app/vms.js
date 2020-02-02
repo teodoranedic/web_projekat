@@ -2,7 +2,7 @@ Vue.component("vms-page", {
 	data: function () {
 		    return {
 		      vms: null,
-		      organization: {}, // ne treba trenutno dok ne smislimo kako
+		      organization: {},
 		      role: null,
 		      searchData: {name:'', coreNumberFrom: 0, coreNumberTo:0,
 		    	  			RAMFrom: 0, RAMTo: 0,
@@ -19,7 +19,6 @@ Vue.component("vms-page", {
 					<th>Core number</th>
 					<th>RAM</th>
 					<th>GPU</th>
-					<th>Organization</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -29,7 +28,6 @@ Vue.component("vms-page", {
 					<td>{{m.category.coreNumber}}</td>
 					<td>{{m.category.RAM}}</td>
 					<td>{{m.category.GPUcore}}</td>
-					<td>/</td>
 
 				</tr>
 			</tbody>
@@ -49,6 +47,7 @@ Vue.component("vms-page", {
 			<td>to:</td><td><input type="number" id="GPUTo" v-model="searchData.GPUTo"></td></tr>
 			</table>
 			<button class="btn btn-primary btn-lg" tabindex="-1" v-on:click="search(searchData)">Search</button>
+			<a href="#/page" class="btn btn-primary btn-lg" tabindex="-1" role="button">Home</a>
 		
 
 		</div>		  

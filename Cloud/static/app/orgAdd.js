@@ -60,7 +60,7 @@ Vue.component("orgAdd-page", {
 				if(!this.orgData.description)
 					this.descErr = 'Description cannot be blank.';
 				if(this.orgData.imagePath == null)
-					this.imageErr = 'Choose a file for logo.';
+					this.orgData.imagePath = 'weather_cloud_cloudy_icon_124152.ico';
 				if(this.orgData.name && this.orgData.description && this.orgData.imagePath != null){
 					axios
 					.post('rest/addOrg', {"name": orgData.name, "description": orgData.description, "imagePath": orgData.imagePath})

@@ -1,5 +1,4 @@
 "name","description","imagePath","users","resources"
-"org6","lalalaalalalla","logo1.jpg","admin@admin.com","d1;vm4;d3;vm33;v6"
-"org2","fgjsnsjd","C:fakepathlogo1.jpg","",""
-"org3","gfjdgnf","logo.jpg","admin2@gmail.com","vm55"
-"org12","kfkrg","dustin.jpg","",""
+"Org1","test organization no.1","weather_cloud_cloudy_icon_124152.ico","admin@admin.com;milica@gmail.com","VM1;Disc1;Disc2;Disc3;Disc4"
+"Org 2","test organization no.2","deluge-icon.png","acaadmin@admin.com","VM12"
+"Org23","test organization no.23","spotify-client-icon.png","","VM2"

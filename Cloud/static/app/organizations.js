@@ -28,6 +28,7 @@ Vue.component("organization-page", {
 			</table>
 			
 			<a href="#/addOrg" v-if="role=='SUPERADMIN'" class="btn btn-primary btn-lg" tabindex="-1" role="button"> Add New </a>
+			<a href="#/page" class="btn btn-primary btn-lg" tabindex="-1" role="button">Home</a>
 
 		</div>		  
 		`

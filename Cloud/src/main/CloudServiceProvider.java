@@ -35,6 +35,7 @@ import model.Role;
 import model.User;
 import model.VM;
 import model.VMData;
+import model.VMRetVal;
 import model.VMSearch;
 import spark.Session;
 import utility.Check;
@@ -635,7 +636,7 @@ public class CloudServiceProvider {
 		put("rest/editVM/:name", (req, res) -> {
 			res.type("application/json");
 			String name = req.params("name");
-			VM data = g.fromJson(req.body(), VM.class);
+			VMRetVal data = g.fromJson(req.body(), VMRetVal.class);
 			if (!data.getName().equals(name) && !Check.VMNameUnique(data.getName())) {
 				res.status(400);
 				return "New name is not unique";
@@ -653,7 +654,7 @@ public class CloudServiceProvider {
 					ArrayList<Disc> remove = new ArrayList<Disc>();
 					for (Disc d : v.getDiscs()) {
 						boolean r = true;
-						for (Disc d2 : data.getDiscs()) {
+						for (Disc d2 : data.getDiscs()) { // ovo su diskovi koji su ostali
 							if (d2.getName().equals(d.getName())) {
 								r = false;
 								break;
@@ -663,6 +664,7 @@ public class CloudServiceProvider {
 							remove.add(d);
 						}
 					}
+					
 					for (Disc d : discs) {
 						for (Disc d2 : remove) {
 							if (d.getName().equals(d2.getName())) {
@@ -990,7 +992,16 @@ public class CloudServiceProvider {
 					{
 						if(a.getTurnOn().after(data.getStart()))
 						{
-							if(a.getTurnOff().before(data.getEnd()))
+							if(a.getTurnOff() == null)
+							{
+								
+								diffInMillies = Math.abs(data.getEnd().getTime() - a.getTurnOn().getTime());
+							    days = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+								// upada u granica
+								mc.setName(((VM)r).getName());
+								mc.add(days*Check.getVMPrice((VM)r));
+							}
+							else if(a.getTurnOff().before(data.getEnd()))
 							{
 								diffInMillies = Math.abs(a.getTurnOff().getTime() - a.getTurnOn().getTime());
 							    days = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
@@ -1013,7 +1024,14 @@ public class CloudServiceProvider {
 						}
 						else 
 						{
-							if(a.getTurnOff().after(data.getStart()) & a.getTurnOff().before(data.getEnd()))
+							if(a.getTurnOff() == null)
+							{
+								diffInMillies = Math.abs(data.getEnd().getTime() - data.getStart().getTime());
+							    days = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+								mc.setName(((VM)r).getName());
+								mc.add(days*Check.getVMPrice((VM)r));
+							}
+							else if(a.getTurnOff().after(data.getStart()) & a.getTurnOff().before(data.getEnd()))
 							{
 								// turnOff after getStart and before getEnd
 								// od get start do turn off

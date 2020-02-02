@@ -51,6 +51,7 @@ Vue.component("account", {
 			<a href="#/" class="btn btn-primary btn-lg" tabindex="-1" role="button" v-on:click="deleteAcc()"> Delete account </a>
 			<a href="#/page" class="btn btn-primary btn-lg" tabindex="-1" role="button" v-on:click="cancel()"> Cancel </a>
 			<button class="btn btn-primary btn-lg" tabindex="-1"  v-on:click="save()">Save</button>
+			<a href="#/page" class="btn btn-primary btn-lg" tabindex="-1" role="button">Home</a>
 
 		</div>		  
 		`

@@ -35,8 +35,8 @@ Vue.component("vmEdit-page", {
 				</tr>
 				
 				<tr v-for="a in activities">
-					<td><input type="date" v-bind:value="a.turnOn | inputDateFilter" v-on:input="a.turnOn = getDate($event.target.value)" v-bind:disabled="role=='USER'"/></td>
-					<td><input type="date" v-bind:value="a.turnOff | inputDateFilter" v-on:input="a.turnOff = getDate($event.target.value)" v-bind:disabled="role=='USER'"/></td>
+					<td><input type="date" v-bind:value="a.turnOn | inputDateFilter" v-on:input="a.turnOn = getDate($event.target.value)" v-bind:disabled="role !='SUPERADMIN'"/></td>
+					<td><input type="date" v-bind:value="a.turnOff | inputDateFilter" v-on:input="a.turnOff = getDate($event.target.value)" v-bind:disabled="role != 'SUPERADMIN'"/></td>
 					<td></td>
 				</tr>
 				

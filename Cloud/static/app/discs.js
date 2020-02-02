@@ -37,6 +37,7 @@ Vue.component("disc-page", {
 			<td>to:</td><td><input type="number" id="capacityTo" v-model="searchData.to"></td></tr>
 			</table>
 			<button class="btn btn-primary btn-lg" tabindex="-1" v-on:click="search(searchData)">Search</button>
+			<a href="#/page" class="btn btn-primary btn-lg" tabindex="-1" role="button">Home</a>
 		
 
 		</div>		  

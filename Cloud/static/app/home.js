@@ -41,7 +41,6 @@ Vue.component("home-page", {
 					<th>Core number</th>
 					<th>RAM</th>
 					<th>GPU</th>
-					<th>Organization</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -51,7 +50,6 @@ Vue.component("home-page", {
 					<td>{{m.category.coreNumber}}</td>
 					<td>{{m.category.RAM}}</td>
 					<td>{{m.category.GPUcore}}</td>
-					<td>/</td>
 
 				</tr>
 			</tbody>
